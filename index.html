@@ -188,7 +188,7 @@ function initApp(){
 }
 
 function renderTabs(){
-  const tabs=['Overview','Champions','Seasons','Record Book','Draft History','Constitution'];
+  const tabs=['Overview','Champions','Seasons','Record Book','Draft History','Rules'];
   document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.tab===t?'active':''}" onclick="state.tab='${t}';render()">${t}</button>`).join('');
 }
 
@@ -208,7 +208,7 @@ function render(){
   else if(state.tab==='Seasons')el.innerHTML=renderSeasons();
   else if(state.tab==='Record Book')el.innerHTML=renderRecords();
   else if(state.tab==='Draft History')el.innerHTML=renderDraft();
-  else if(state.tab==='Constitution')el.innerHTML=renderConstitution();
+  else if(state.tab==='Rules')el.innerHTML=renderConstitution();
 }
 
 function renderOverview(){
