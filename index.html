@@ -72,6 +72,7 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
 .footer{margin-top:60px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:center;font-size:11px;color:#475569}
 .week-summary{margin-top:20px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px}
 .loading{text-align:center;padding:60px;color:#64748b;font-size:16px}
+.header-row div[onclick]{cursor:pointer;user-select:none;transition:color .2s}.header-row div[onclick]:hover{color:#22d3ee}
 .standings-grid{display:grid;grid-template-columns:30px 4px 1fr 65px 55px 75px 75px 1fr;align-items:center;padding:10px 16px}
 .standings-grid-25{display:grid;grid-template-columns:30px 4px 1fr 60px 55px 80px 80px;align-items:center;padding:10px 16px}
 @media(max-width:768px){
@@ -163,7 +164,23 @@ async function loadData(){
 // ══════════════════════════════════════════════════
 // APP STATE & RENDERING
 // ══════════════════════════════════════════════════
-let state={tab:'Overview',subTab:'standings',selWeek:1,recIdx:0,draftYear:2025,draftRound:1,selSeason:2025};
+let state={tab:'Overview',subTab:'standings',selWeek:1,recIdx:0,draftYear:2025,draftRound:1,selSeason:2025,sortCol:'record',sortDir:'desc'};
+
+function toggleSort(col){if(state.sortCol===col){state.sortDir=state.sortDir==='desc'?'asc':'desc';}else{state.sortCol=col;state.sortDir='desc';}render();}
+function sortArrow(col){if(state.sortCol!==col)return' ↕';return state.sortDir==='desc'?' ▼':' ▲';}
+function sortStandings(rows){
+  const dir=state.sortDir==='desc'?-1:1;
+  return[...rows].sort((a,b)=>{
+    const ag=a.wins+a.losses+(a.ties||0),bg=b.wins+b.losses+(b.ties||0);
+    switch(state.sortCol){
+      case'record':const aw=ag>0?a.wins/ag:0,bw=bg>0?b.wins/bg:0;return aw!==bw?(bw-aw)*dir:(b.wins-a.wins)*dir;
+      case'winpct':const ap=ag>0?a.wins/ag:0,bp=bg>0?b.wins/bg:0;return(bp-ap)*dir;
+      case'pf':return((b.points_for||0)-(a.points_for||0))*dir;
+      case'pa':return((b.points_against||0)-(a.points_against||0))*dir;
+      default:return 0;
+    }
+  });
+}
 
 function initApp(){
   renderTabs();
@@ -274,11 +291,12 @@ function renderSeasons(){
   }
 
   if(state.subTab==='standings'){
-    const stYr=DATA.standings.filter(r=>r.season===yr).sort((a,b)=>a.rank-b.rank);
+    const stYrRaw=DATA.standings.filter(r=>r.season===yr);
+    const stYr=sortStandings(stYrRaw);
     if(stYr.length){
-      html+=`<div class="data-table"><div class="standings-grid-25 header-row"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right">PF</div><div style="text-align:right" class="hide-mobile">PA</div></div>`;
+      html+=`<div class="data-table"><div class="standings-grid-25 header-row"><div>#</div><div></div><div>Team</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('record')">Record${sortArrow('record')}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('winpct')">Win%${sortArrow('winpct')}</div><div style="text-align:right;cursor:pointer" onclick="toggleSort('pf')">PF${sortArrow('pf')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pa')">PA${sortArrow('pa')}</div></div>`;
       stYr.forEach((r,i)=>{const c=tc(r.team_name);const gm=r.wins+r.losses+(r.ties||0);const p=gm>0?(r.wins/gm).toFixed(3):'—';
-        html+=`<div class="standings-grid-25" style="${i%2===0?'background:rgba(255,255,255,0.02)':''}"><div style="font-size:14px;color:#64748b;font-weight:700;text-align:center">${r.rank}</div><div class="color-bar" style="background:${c};height:24px"></div><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${r.ties>0?'-'+r.ties:''}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div><div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${r.points_for>0?r.points_for.toFixed(1):'—'}</div><div style="font-size:13px;color:#64748b;text-align:right" class="hide-mobile">${r.points_against>0?r.points_against.toFixed(1):'—'}</div></div>`;
+        html+=`<div class="standings-grid-25" style="${i%2===0?'background:rgba(255,255,255,0.02)':''}"><div style="font-size:14px;color:#64748b;font-weight:700;text-align:center">${i+1}</div><div class="color-bar" style="background:${c};height:24px"></div><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${r.ties>0?'-'+r.ties:''}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div><div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${r.points_for>0?r.points_for.toFixed(1):'—'}</div><div style="font-size:13px;color:#64748b;text-align:right" class="hide-mobile">${r.points_against>0?r.points_against.toFixed(1):'—'}</div></div>`;
       });
       html+=`</div>`;
     } else {
