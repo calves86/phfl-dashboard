@@ -407,95 +407,141 @@ function renderDraft(){
 }
 
 function renderConstitution(){
-  let html=secTitle('League Constitution','Updated Sept 2023');
+  let html=secTitle('Rules & Constitution','Playa Hatas Football League');
+  html+=`<div class="sub-tabs"><button class="sub-tab ${state.rulesTab==='rules'||!state.rulesTab?'active':''}" onclick="state.rulesTab='rules';render()">League Rules</button><button class="sub-tab ${state.rulesTab==='scoring'?'active':''}" onclick="state.rulesTab='scoring';render()">Scoring</button><button class="sub-tab ${state.rulesTab==='constitution'?'active':''}" onclick="state.rulesTab='constitution';render()">Constitution</button></div>`;
 
-  const sections=[
-    {title:'WINNINGS',items:[
-      'LEAGUE (will be variable based upon transactions)',
-      '1st — 70%',
-      '2nd — 20%',
-      '3rd — 10%',
-      'SECONDARY PRIZES — $700 TOTAL',
-      'Division Winners — $150 (each)',
-      'Most Points — $100',
-      'Best Last Rounder — $100',
-      'Best Record — $100',
-      'Week 17 Royal — $100',
-    ]},
-    {title:'WINNER',items:['Renames a team of choice']},
-    {title:'DIVISIONS',items:['2 divisions drafted by 1st and 2nd place teams prev year']},
-    {title:'BALLER SCORING BONUSES',items:[
-      'HOOK UP Points — QB to RB/WR/TE on team — 4 pts',
-      'Missed FG over 50 yards — Only -1 contrary to -3 (please monitor your kicker)',
-    ]},
-    {title:'TRADES',items:['Trade Deadline is WEEK 9. Trades can be made up until a player participates in their game that week']},
-    {title:'PAYMENT',items:['League Fee — $600 (Flat Fee)']},
-    {title:'PLAYOFFS',items:[
-      'Re-Seeding after rounds',
-      'Conference Winners — 1 & 2',
-      'Rest of Playoff Seeds — 3-8 seeds, regardless of division, based on points',
-    ]},
-    {title:'TIEBREAKER',items:['Overall record','Most Points']},
-    {title:'DRAFT ORDER & BOOTY BOWL',items:[
-      'The losers of each of the games will play in consolation games to determine draft order PICKING for next year. Matchups will not be set until playoffs actually start in week 14-16 of the regular season. We will be picking our draft positions based on reverse order or Booty Bowl to Champ.',
-      'The Remaining 4 teams will compete in a separate bracket to see who gets the number one pick for next year. Winner of that bracket gets the number one pick. Runner-up gets #2 pick, and so forth. The loser of both games = Biggest Loser.',
-    ]},
-    {title:'WAIVERS',items:[
-      'Waivers run every Wednesday at 2 AM based on a free agent bidding system. Whoever bids the highest receives the player.',
-      'Once the waiver bidding process has occurred, any player not on waivers may be added.',
-      'Each team starts out with $1000 of free agent money.',
-      'Zero dollar bids are not allowed.',
-      'Each player dropped must go through a 24 hour waiver period — once cleared may be picked up.',
-    ]},
-    {title:'PLAYOFF ROSTERS',items:['Add/Drops are allowed in playoffs']},
-    {title:'INJURED RESERVE',items:[]},
-  ];
+  const rt=state.rulesTab||'rules';
 
-  const amendments=[
-    {year:'2021',items:[
-      'ADD/DROPS ALLOWED AFTER SUNDAY GAMES BEGIN FOR TEAMS THAT HAVE YET TO PLAY',
-      'TRADE DEADLINE MOVED TO WEEK 11',
-      'DEFENSIVE SCORING — DEFENSE LETS UP 40+, LOSE 5 POINTS',
-      'ADD FLEX POSITION — 2RB, 2WR, TE, FLEX',
-      'REMOVE IDP',
-      'IF LINEUP NOT SET $200 FINE. IF NOT SET TWICE, BOOTED. FUCK EM',
-    ]},
-    {year:'2023',items:[
-      'Anytime TDs — Kick return, fumble return, punt return',
-      'Playoff Entry — Record, then Points',
-      'Cut 1 roster spot',
-      'Add 2nd RB spot',
-      'Blocked punt/FG',
-    ]},
-    {year:'2024',items:['Reduce roster size — 17 (16+IR)']},
-  ];
+  if(rt==='rules'){
+    // League Identity
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">LEAGUE IDENTITY</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    [{l:'League Name',v:'Playa Hatas Football League'},{l:'League URL',v:'phfl06.football.cbssports.com'},{l:'Teams',v:'12'},{l:'Divisions',v:'2'},{l:'League Entry Fee',v:'$600'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#64748b">${r.l}</span><span style="font-size:13px;font-weight:600;color:#e2e8f0">${r.v}</span></div>`;
+    });
+    html+=`</div>`;
 
-  // Main rules
-  html+=`<div style="padding:24px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);margin-bottom:24px">`;
-  html+=`<div style="font-size:14px;color:#94a3b8;font-style:italic;margin-bottom:24px;line-height:1.6">Fellow Hatas — The following is the League Rules implemented by the most Supreme Council of Playa HATA's</div>`;
+    // Roster Limits
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">ROSTER LIMITS</div>`;
+    html+=`<div class="data-table" style="margin-bottom:12px">`;
+    html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06)"><span>Status</span><span style="display:flex;gap:40px"><span>Min</span><span>Max</span></span></div>`;
+    [{l:'Starters',mn:'9',mx:'9'},{l:'Bench',mn:'0',mx:'8'},{l:'Injured Players',mn:'0',mx:'2'},{l:'Total Players',mn:'9',mx:'18'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#e2e8f0;font-weight:600">${r.l}</span><span style="display:flex;gap:48px;font-size:13px;color:#94a3b8"><span>${r.mn}</span><span>${r.mx}</span></span></div>`;
+    });
+    html+=`</div>`;
 
-  sections.forEach(sec=>{
-    html+=`<div style="margin-bottom:20px">`;
-    html+=`<div style="font-size:15px;font-weight:800;color:#22d3ee;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid rgba(34,211,238,0.15);padding-bottom:6px">${sec.title}</div>`;
-    if(sec.items.length){
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06)"><span>Position</span><span style="display:flex;gap:24px"><span>Start</span><span>Max</span></span></div>`;
+    [{p:'QB',s:'1',m:'4'},{p:'RB',s:'2',m:'8'},{p:'WR',s:'2',m:'8'},{p:'TE',s:'1',m:'3'},{p:'RB-WR-TE (Flex)',s:'1',m:'1'},{p:'K',s:'1',m:'3'},{p:'DST',s:'1',m:'3'}].forEach((r,i)=>{
+      const pc={QB:'#f472b6',RB:'#22d3ee',WR:'#34d399',TE:'#fb923c',K:'#facc15',DST:'#a78bfa'};
+      const col=pc[r.p]||'#94a3b8';
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:${col};font-weight:700">${r.p}</span><span style="display:flex;gap:40px;font-size:13px;color:#94a3b8"><span>${r.s}</span><span>${r.m}</span></span></div>`;
+    });
+    html+=`</div>`;
+
+    // Transaction Settings
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">TRANSACTION SETTINGS</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    [{l:'Lineup Deadline',v:'5 minutes before gametime for each player'},{l:'Add/Drop Policy',v:'Handled by waivers process'},{l:'Add/Drop Deadline',v:'Locks 5 min before first Sunday game'},{l:'Waivers Run',v:'Tue, Wed, Thu, Fri, Sat night'},{l:'FAB Budget',v:'$1,000 per team'},{l:'Zero Offers',v:'Not allowed'},{l:'Free Agents Cost',v:'$0 after waiver run'},{l:'Waiver Period',v:'Dropped players on waivers at least 1 day'},{l:'Trade Policy',v:'Must be approved by commissioner'},{l:'Trade Deadline',v:'Week 11 (11:59 PM ET)'},{l:'Offseason Trades',v:'Not allowed'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;gap:20px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#64748b;flex-shrink:0">${r.l}</span><span style="font-size:13px;font-weight:600;color:#e2e8f0;text-align:right">${r.v}</span></div>`;
+    });
+    html+=`</div>`;
+
+    // Schedule & Playoffs
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">SCHEDULE & PLAYOFFS</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    [{l:'Scoring System',v:'Head-to-Head, Points'},{l:'Matchups Per Period',v:'1'},{l:'Playoffs Start',v:'Week 15'},{l:'Playoff Length',v:'4 Weeks'},{l:'Matchup Tiebreaker',v:'More points from Reserves'},{l:'Standings Tiebreaker',v:'Win%, then Total Points'},{l:'Lineup Policy',v:'Set lineups, change eligible positions'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;gap:20px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#64748b;flex-shrink:0">${r.l}</span><span style="font-size:13px;font-weight:600;color:#e2e8f0;text-align:right">${r.v}</span></div>`;
+    });
+    html+=`</div>`;
+
+    // Draft Settings
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">DRAFT SETTINGS</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    [{l:'Draft Format',v:'Live Draft — Snake'},{l:'Draft Rounds',v:'16 Rounds'},{l:'Pick Timer',v:'90 seconds between picks'},{l:'Draft Robot',v:'Enabled — auto-picks if clock expires'},{l:'Player Pool',v:'AFC and NFC Players'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#64748b">${r.l}</span><span style="font-size:13px;font-weight:600;color:#e2e8f0">${r.v}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(rt==='scoring'){
+    // Offensive Scoring
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">OFFENSIVE SCORING</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    const offScoring=[
+      {cat:'Passing',items:['Passing TD — 5 pts (+3 bonus for 50+ yd TD)','Passing Yards — 0.04 pts per yard','Passing Yard Bonuses: +2 @ 250yd, +3 @ 300yd, +3 @ 350yd, +4 @ 400yd, +3 @ 500yd','Passing INT — -2 pts','Passing INT returned for TD — -6 pts','Passing 2-Point Conversion — 2 pts']},
+      {cat:'Rushing',items:['Rushing TD — 6 pts (+5 bonus for 50+ yd TD)','Rushing Yards — 0.1 pts per yard','Rushing Yard Bonuses: +3 @ 100yd, +3 @ 125yd, +5 @ 150yd, +5 @ 200yd, +5 @ 250yd','Rushing Attempts: +2 pts (20-24), +3 pts (25-29), +5 pts (30+)','Rushing 2-Point Conversion — 2 pts']},
+      {cat:'Receiving',items:['Receiving TD — 6 pts (+3 bonus for 50+ yd TD)','Receiving Yards — 0.1 pts per yard','Receiving Yard Bonuses: +3 @ 100yd, +3 @ 125yd, +5 @ 150yd, +5 @ 200yd, +3 @ 250yd','Receptions — 1 pt each (+2 bonus @ 12+ receptions)','Receiving 2-Point Conversion — 2 pts']},
+      {cat:'Kicking',items:['Field Goals — 3 pts (+2 bonus for 50+ yards)','Missed FG — -3 pts (+2 for 50+ yd miss, so only -1)','Extra Points — 1 pt','Missed Extra Point — -2 pts']},
+      {cat:'Misc',items:['Fumble Lost — -2 pts','Offensive Fumble Recovery TD — 6 pts','Kick Return TD — 6 pts','Punt Return TD — 6 pts']},
+    ];
+    offScoring.forEach(cat=>{
+      html+=`<div style="padding:12px 16px;background:rgba(34,211,238,0.05);font-size:13px;font-weight:800;color:#22d3ee;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,0.06)">${cat.cat}</div>`;
+      cat.items.forEach((item,i)=>{
+        html+=`<div style="padding:8px 16px 8px 28px;font-size:13px;color:#94a3b8;line-height:1.5;${i%2===0?'background:rgba(255,255,255,0.015)':''}">${item}</div>`;
+      });
+    });
+    html+=`</div>`;
+
+    // Defensive Scoring
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">DEFENSIVE / SPECIAL TEAMS SCORING</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    [{l:'Sack',v:'3 pts'},{l:'Interception',v:'3 pts'},{l:'Forced Fumble',v:'1 pt'},{l:'Fumble Recovery',v:'1 pt'},{l:'Defensive TD',v:'6 pts'},{l:'Special Teams TD',v:'6 pts'},{l:'Safety',v:'5 pts'},{l:'Blocked FG',v:'2 pts'},{l:'Blocked Punt',v:'2 pts'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#94a3b8">${r.l}</span><span style="font-size:13px;font-weight:700;color:#a78bfa">${r.v}</span></div>`;
+    });
+    html+=`</div>`;
+
+    // Points Against
+    html+=`<div style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#22d3ee;margin-bottom:12px">POINTS AGAINST (DST)</div>`;
+    html+=`<div class="data-table" style="margin-bottom:24px">`;
+    [{l:'0-3 Points Allowed',v:'+10 pts',c:'#34d399'},{l:'4-10 Points Allowed',v:'+8 pts',c:'#34d399'},{l:'11-21 Points Allowed',v:'+6 pts',c:'#34d399'},{l:'22-30 Points Allowed',v:'+3 pts',c:'#94a3b8'},{l:'31-38 Points Allowed',v:'0 pts',c:'#64748b'},{l:'39-50 Points Allowed',v:'-5 pts',c:'#f87171'},{l:'51+ Points Allowed',v:'-6 pts',c:'#f87171'}].forEach((r,i)=>{
+      html+=`<div style="display:flex;justify-content:space-between;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><span style="font-size:13px;color:#94a3b8">${r.l}</span><span style="font-size:13px;font-weight:700;color:${r.c}">${r.v}</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(rt==='constitution'){
+    const sections=[
+      {title:'WINNINGS',items:['LEAGUE (will be variable based upon transactions)','1st — 70%','2nd — 20%','3rd — 10%','SECONDARY PRIZES — $700 TOTAL','Division Winners — $150 (each)','Most Points — $100','Best Last Rounder — $100','Best Record — $100','Week 17 Royal — $100']},
+      {title:'WINNER',items:['Renames a team of choice']},
+      {title:'DIVISIONS',items:['2 divisions drafted by 1st and 2nd place teams prev year']},
+      {title:'BALLER SCORING BONUSES',items:['HOOK UP Points — QB to RB/WR/TE on team — 4 pts','Missed FG over 50 yards — Only -1 contrary to -3 (please monitor your kicker)']},
+      {title:'TRADES',items:['Trade Deadline is WEEK 9. Trades can be made up until a player participates in their game that week']},
+      {title:'PAYMENT',items:['League Fee — $600 (Flat Fee)']},
+      {title:'PLAYOFFS',items:['Re-Seeding after rounds','Conference Winners — 1 & 2','Rest of Playoff Seeds — 3-8 seeds, regardless of division, based on points']},
+      {title:'TIEBREAKER',items:['Overall record','Most Points']},
+      {title:'DRAFT ORDER & BOOTY BOWL',items:['The losers of each of the games will play in consolation games to determine draft order PICKING for next year. Matchups will not be set until playoffs actually start in week 14-16 of the regular season. We will be picking our draft positions based on reverse order or Booty Bowl to Champ.','The Remaining 4 teams will compete in a separate bracket to see who gets the number one pick for next year. Winner of that bracket gets the number one pick. Runner-up gets #2 pick, and so forth. The loser of both games = Biggest Loser.']},
+      {title:'WAIVERS',items:['Waivers run every Wednesday at 2 AM based on a free agent bidding system. Whoever bids the highest receives the player.','Once the waiver bidding process has occurred, any player not on waivers may be added.','Each team starts out with $1000 of free agent money.','Zero dollar bids are not allowed.','Each player dropped must go through a 24 hour waiver period — once cleared may be picked up.']},
+      {title:'PLAYOFF ROSTERS',items:['Add/Drops are allowed in playoffs']},
+    ];
+
+    const amendments=[
+      {year:'2021',items:['ADD/DROPS ALLOWED AFTER SUNDAY GAMES BEGIN FOR TEAMS THAT HAVE YET TO PLAY','TRADE DEADLINE MOVED TO WEEK 11','DEFENSIVE SCORING — DEFENSE LETS UP 40+, LOSE 5 POINTS','ADD FLEX POSITION — 2RB, 2WR, TE, FLEX','REMOVE IDP','IF LINEUP NOT SET $200 FINE. IF NOT SET TWICE, BOOTED. FUCK EM']},
+      {year:'2023',items:['Anytime TDs — Kick return, fumble return, punt return','Playoff Entry — Record, then Points','Cut 1 roster spot','Add 2nd RB spot','Blocked punt/FG']},
+      {year:'2024',items:['Reduce roster size — 17 (16+IR)']},
+    ];
+
+    html+=`<div style="padding:24px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);margin-bottom:24px">`;
+    html+=`<div style="font-size:14px;color:#94a3b8;font-style:italic;margin-bottom:24px;line-height:1.6">Fellow Hatas — The following is the League Rules implemented by the most Supreme Council of Playa HATA's</div>`;
+    sections.forEach(sec=>{
+      html+=`<div style="margin-bottom:20px"><div style="font-size:15px;font-weight:800;color:#22d3ee;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:8px;border-bottom:1px solid rgba(34,211,238,0.15);padding-bottom:6px">${sec.title}</div>`;
       sec.items.forEach(item=>{
         html+=`<div style="font-size:13px;color:#94a3b8;padding:4px 0 4px 16px;border-left:2px solid rgba(255,255,255,0.06);margin-bottom:4px;line-height:1.5">${item}</div>`;
       });
-    }
-    html+=`</div>`;
-  });
-  html+=`</div>`;
-
-  // Amendments
-  html+=secTitle('Rule Amendments','Changes Over The Years');
-  amendments.forEach(am=>{
-    html+=`<div style="margin-bottom:20px;padding:18px 20px;border-radius:12px;background:linear-gradient(135deg,rgba(167,139,250,0.06),rgba(255,255,255,0.02));border:1px solid rgba(167,139,250,0.12)">`;
-    html+=`<div style="font-size:18px;font-weight:800;color:#a78bfa;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:10px">${am.year} AMENDMENTS</div>`;
-    am.items.forEach(item=>{
-      html+=`<div style="font-size:13px;color:#94a3b8;padding:5px 0 5px 16px;border-left:2px solid rgba(167,139,250,0.2);margin-bottom:4px;line-height:1.5">${item}</div>`;
+      html+=`</div>`;
     });
     html+=`</div>`;
-  });
+
+    html+=secTitle('Rule Amendments','Changes Over The Years');
+    amendments.forEach(am=>{
+      html+=`<div style="margin-bottom:20px;padding:18px 20px;border-radius:12px;background:linear-gradient(135deg,rgba(167,139,250,0.06),rgba(255,255,255,0.02));border:1px solid rgba(167,139,250,0.12)">`;
+      html+=`<div style="font-size:18px;font-weight:800;color:#a78bfa;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:10px">${am.year} AMENDMENTS</div>`;
+      am.items.forEach(item=>{
+        html+=`<div style="font-size:13px;color:#94a3b8;padding:5px 0 5px 16px;border-left:2px solid rgba(167,139,250,0.2);margin-bottom:4px;line-height:1.5">${item}</div>`;
+      });
+      html+=`</div>`;
+    });
+  }
 
   return html;
 }
