@@ -186,7 +186,7 @@ function initApp(){
 }
 
 function renderTabs(){
-  const tabs=['Overview','Champions','Seasons','Record Book','Draft History','Rules'];
+  const tabs=['Overview','Champions','Seasons','Record Book','Draft History','Head-to-Head','Rules'];
   document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.tab===t?'active':''}" onclick="state.tab='${t}';render()">${t}</button>`).join('');
 }
 
@@ -206,6 +206,7 @@ function render(){
   else if(state.tab==='Seasons')el.innerHTML=renderSeasons();
   else if(state.tab==='Record Book')el.innerHTML=renderRecords();
   else if(state.tab==='Draft History')el.innerHTML=renderDraft();
+  else if(state.tab==='Head-to-Head')el.innerHTML=renderH2H();
   else if(state.tab==='Rules')el.innerHTML=renderConstitution();
 }
 
@@ -284,10 +285,29 @@ function renderOverview(){
   html+=`<div class="card-grid">${NEVERW.map(nw=>`<div class="ringless-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:6px"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(248,113,113,0.2),rgba(248,113,113,0.05));border:2px solid rgba(248,113,113,0.3);display:flex;align-items:center;justify-content:center;font-size:18px">💀</div><div><div style="font-size:16px;font-weight:700">${nw.m}</div><div style="font-size:12px;color:#94a3b8">${nw.t} — ${nw.s}</div></div></div>${nw.n?`<div style="font-size:12px;color:#f87171;font-style:italic">${nw.n}</div>`:''}</div>`).join('')}</div>`;
 
   if(allTime.length){
-    html+=secTitle('Career Standings','By Owner');
-    const sortedAllTime=sortStandings(allTime);
-    html+=`<div class="data-table"><div class="standings-grid header-row"><div>#</div><div>Owner</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('record')">Record${sortArrow('record')}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('winpct')">Win%${sortArrow('winpct')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pf')">PF${sortArrow('pf')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pa')">PA${sortArrow('pa')}</div><div style="text-align:right;padding-right:8px" class="hide-mobile">Seasons</div></div>`;
-    sortedAllTime.forEach((r,i)=>{
+    // Also build franchise-based standings
+    const franchiseData={};
+    DATA.team_yearly.forEach(r=>{
+      if(!franchiseData[r.franchise])franchiseData[r.franchise]={w:0,l:0,t:0,pf:0,pa:0,seasons:0,mgr:r.manager};
+      const f=franchiseData[r.franchise];
+      f.w+=r.wins;f.l+=r.losses;f.t+=r.ties||0;f.pf+=r.points_for;f.pa+=r.points_against;f.seasons++;
+      f.mgr=r.manager;
+    });
+    const franchiseList=Object.entries(franchiseData).map(([name,d])=>({
+      team_name:name,wins:d.w,losses:d.l,ties:d.t,points_for:d.pf,points_against:d.pa,mgr:d.mgr,seasons:d.seasons
+    }));
+
+    const mode=state.standingsMode||'franchise';
+    html+=secTitle('Career Standings',mode==='owner'?'By Owner':'By Franchise');
+    html+=`<div class="sub-tabs" style="margin-bottom:16px"><button class="sub-tab ${mode==='franchise'?'active':''}" onclick="state.standingsMode='franchise';render()">By Franchise</button><button class="sub-tab ${mode==='owner'?'active':''}" onclick="state.standingsMode='owner';render()">By Owner</button></div>`;
+
+    const listToSort=mode==='owner'?allTime:franchiseList;
+    const sortedList=sortStandings(listToSort);
+    const colLabel=mode==='owner'?'Owner':'Franchise';
+    const lastCol=mode==='owner'?'Seasons':'Manager';
+
+    html+=`<div class="data-table"><div class="standings-grid header-row"><div>#</div><div>${colLabel}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('record')">Record${sortArrow('record')}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('winpct')">Win%${sortArrow('winpct')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pf')">PF${sortArrow('pf')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pa')">PA${sortArrow('pa')}</div><div style="text-align:right;padding-right:8px" class="hide-mobile">${lastCol}</div></div>`;
+    sortedList.forEach((r,i)=>{
       const gm=r.wins+r.losses+(r.ties||0);const p=gm>0?(r.wins/gm).toFixed(3):'—';
       html+=`<div class="standings-grid" style="${i%2===0?'background:rgba(255,255,255,0.015)':''}"><div style="font-size:13px;color:#64748b;font-weight:700;text-align:center">${i+1}</div><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${r.ties>0?'-'+r.ties:''}</div><div style="font-size:13px;color:${parseFloat(p)>=0.52?'#22d3ee':'#94a3b8'};text-align:center;font-weight:600">${p}</div><div style="font-size:12px;color:#94a3b8;text-align:right" class="hide-mobile">${Math.round(r.points_for).toLocaleString()}</div><div style="font-size:12px;color:#64748b;text-align:right" class="hide-mobile">${Math.round(r.points_against).toLocaleString()}</div><div style="font-size:11px;color:#475569;text-align:right;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" class="hide-mobile">${r.mgr||''}</div></div>`;
     });
@@ -446,6 +466,83 @@ function renderDraft(){
     html+=`</div>`;
   }
 
+  return html;
+}
+
+function renderH2H(){
+  const h2h=DATA.head_to_head;
+  if(!h2h.length)return'<div style="padding:40px;text-align:center;color:#64748b">No head-to-head data available</div>';
+  const franchises=[...new Set(h2h.map(r=>r.franchise))].sort();
+  const sel=state.h2hTeam||franchises[0];
+  let html=secTitle('Head-to-Head Records','All-Time');
+  html+=`<div class="sub-tabs"><button class="sub-tab ${state.h2hView!=='detail'?'active':''}" onclick="state.h2hView='matrix';render()">Matrix</button><button class="sub-tab ${state.h2hView==='detail'?'active':''}" onclick="state.h2hView='detail';render()">Team Detail</button></div>`;
+
+  if(state.h2hView==='detail'){
+    html+=`<div style="margin-bottom:20px"><select class="dropdown" onchange="state.h2hTeam=this.value;render()">${franchises.map(f=>`<option value="${f}" ${sel===f?'selected':''}>${f}</option>`).join('')}</select></div>`;
+    const teamH2H=h2h.filter(r=>r.franchise===sel).sort((a,b)=>{const ap=a.wins/(a.wins+a.losses||1);const bp=b.wins/(b.wins+b.losses||1);return bp-ap;});
+    const totalW=teamH2H.reduce((s,r)=>s+r.wins,0);const totalL=teamH2H.reduce((s,r)=>s+r.losses,0);
+    html+=`<div style="font-size:18px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:16px">${sel} <span style="color:#94a3b8;font-size:14px">${totalW}-${totalL} overall</span></div>`;
+    html+=`<div class="data-table"><div style="display:grid;grid-template-columns:1fr 80px 60px 80px;padding:10px 16px;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.06)"><div>Opponent</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:center">Streak</div></div>`;
+    teamH2H.forEach((r,i)=>{
+      const gm=r.wins+r.losses+(r.ties||0);const pct=gm>0?(r.wins/gm).toFixed(3):'—';
+      const domColor=parseFloat(pct)>=0.6?'#34d399':parseFloat(pct)>=0.5?'#22d3ee':parseFloat(pct)>=0.4?'#fb923c':'#f87171';
+      const streak=r.streak||'';const streakColor=streak.startsWith('W')?'#34d399':'#f87171';
+      html+=`<div style="display:grid;grid-template-columns:1fr 80px 60px 80px;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><div style="font-size:13px;font-weight:600;color:#e2e8f0">${r.opponent}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${r.ties>0?'-'+r.ties:''}</div><div style="font-size:13px;font-weight:700;color:${domColor};text-align:center">${pct}</div><div style="font-size:12px;font-weight:700;color:${streakColor};text-align:center">${streak}</div></div>`;
+    });
+    html+=`</div>`;
+  } else {
+    // Matrix view - color-coded grid
+    const lookup={};
+    h2h.forEach(r=>{if(!lookup[r.franchise])lookup[r.franchise]={};lookup[r.franchise][r.opponent]={w:r.wins,l:r.losses};});
+    // Short names for matrix headers
+    const shortNames={};
+    franchises.forEach(f=>{
+      const words=f.split(/[\s']+/);
+      if(f.length<=8)shortNames[f]=f;
+      else if(words.length>=2)shortNames[f]=words[0].substring(0,4)+words.length>1?words[words.length-1].substring(0,3):'';
+      else shortNames[f]=f.substring(0,7);
+    });
+    const abbrMap={'1-800-ADMIT-IT':'ADMIT','Blunt Ridaz':'BLUNT','DARK HENRY':'DARK','Go Big Birds':'BIRDS','Jeff/FletcherBaker':'JEFF','London Bridge':'LNDN','Lynchin\' these niggas':'LYNCH','Meat Hammers':'MEAT','Portuguese Conquistadors':'PORT','Rasta Grid':'RASTA','Reality Check':'REAL','Sleepin':'SLEEP','TERIC':'TERIC','THE LORD DOESNT LIVE HERE':'LORD','TaylorMade':'TAYLOR','Your Asia Tature Eks':'ASIA'};
+
+    html+=`<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:24px">`;
+    html+=`<table style="border-collapse:collapse;font-size:11px;min-width:${franchises.length*52+120}px">`;
+    // Header row
+    html+=`<tr><td style="padding:6px 8px;font-weight:700;color:#64748b;position:sticky;left:0;background:#0b1120;z-index:1"></td>`;
+    franchises.forEach(f=>{
+      const abbr=abbrMap[f]||f.substring(0,5);
+      html+=`<td style="padding:4px 2px;text-align:center;font-weight:700;color:#64748b;writing-mode:vertical-lr;transform:rotate(180deg);height:70px;font-size:10px;letter-spacing:0.5px">${abbr}</td>`;
+    });
+    html+=`</tr>`;
+    // Data rows
+    franchises.forEach((f,fi)=>{
+      const abbr=abbrMap[f]||f.substring(0,5);
+      html+=`<tr>`;
+      html+=`<td style="padding:6px 8px;font-weight:700;color:#e2e8f0;white-space:nowrap;position:sticky;left:0;background:#0b1120;z-index:1;font-size:11px;border-right:1px solid rgba(255,255,255,0.06)">${abbr}</td>`;
+      franchises.forEach((opp,oi)=>{
+        if(f===opp){
+          html+=`<td style="padding:4px;text-align:center;background:rgba(255,255,255,0.03);font-size:10px;color:#334155">—</td>`;
+        } else {
+          const rec=lookup[f]&&lookup[f][opp];
+          if(rec){
+            const total=rec.w+rec.l;
+            const pct=total>0?rec.w/total:0.5;
+            let bg,fg;
+            if(pct>=0.7){bg='rgba(34,197,94,0.3)';fg='#34d399';}
+            else if(pct>=0.55){bg='rgba(34,211,238,0.2)';fg='#22d3ee';}
+            else if(pct>=0.45){bg='rgba(255,255,255,0.03)';fg='#94a3b8';}
+            else if(pct>=0.3){bg='rgba(251,146,60,0.2)';fg='#fb923c';}
+            else{bg='rgba(248,113,113,0.25)';fg='#f87171';}
+            html+=`<td style="padding:3px;text-align:center;background:${bg};font-size:10px;font-weight:700;color:${fg};cursor:default" title="${f} vs ${opp}: ${rec.w}-${rec.l}">${rec.w}-${rec.l}</td>`;
+          } else {
+            html+=`<td style="padding:4px;text-align:center;font-size:10px;color:#1e293b">—</td>`;
+          }
+        }
+      });
+      html+=`</tr>`;
+    });
+    html+=`</table></div>`;
+    html+=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:#64748b;margin-top:8px"><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(34,197,94,0.3);vertical-align:middle;margin-right:4px"></span>Dominant (70%+)</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(34,211,238,0.2);vertical-align:middle;margin-right:4px"></span>Winning (55%+)</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,0.03);vertical-align:middle;margin-right:4px"></span>Even</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(251,146,60,0.2);vertical-align:middle;margin-right:4px"></span>Losing (30-45%)</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(248,113,113,0.25);vertical-align:middle;margin-right:4px"></span>Dominated (<30%)</span></div>`;
+  }
   return html;
 }
 
