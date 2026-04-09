@@ -294,7 +294,7 @@ function renderOverview(){
       f.mgr=r.manager;
     });
     const franchiseList=Object.entries(franchiseData).map(([name,d])=>({
-      team_name:name,wins:d.w,losses:d.l,ties:d.t,points_for:d.pf,points_against:d.pa,mgr:d.mgr,seasons:d.seasons
+      team_name:name==='Jeff/FletcherBaker'?'Jeff':name,wins:d.w,losses:d.l,ties:d.t,points_for:d.pf,points_against:d.pa,mgr:d.mgr,seasons:d.seasons
     }));
 
     const mode=state.standingsMode||'franchise';
