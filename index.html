@@ -186,7 +186,7 @@ function initApp(){
 }
 
 function renderTabs(){
-  const tabs=['Overview','Champions','Seasons','Record Book','Draft History','Head-to-Head','Rules'];
+  const tabs=['Overview','Champions','Seasons','Record Book','Draft History','Head-to-Head','Fun Facts','Rules'];
   document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.tab===t?'active':''}" onclick="state.tab='${t}';render()">${t}</button>`).join('');
 }
 
@@ -207,6 +207,7 @@ function render(){
   else if(state.tab==='Record Book')el.innerHTML=renderRecords();
   else if(state.tab==='Draft History')el.innerHTML=renderDraft();
   else if(state.tab==='Head-to-Head')el.innerHTML=renderH2H();
+  else if(state.tab==='Fun Facts')el.innerHTML=renderFunFacts();
   else if(state.tab==='Rules')el.innerHTML=renderConstitution();
 }
 
@@ -543,6 +544,50 @@ function renderH2H(){
     html+=`</table></div>`;
     html+=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:#64748b;margin-top:8px"><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(34,197,94,0.3);vertical-align:middle;margin-right:4px"></span>Dominant (70%+)</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(34,211,238,0.2);vertical-align:middle;margin-right:4px"></span>Winning (55%+)</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(255,255,255,0.03);vertical-align:middle;margin-right:4px"></span>Even</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(251,146,60,0.2);vertical-align:middle;margin-right:4px"></span>Losing (30-45%)</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(248,113,113,0.25);vertical-align:middle;margin-right:4px"></span>Dominated (<30%)</span></div>`;
   }
+  return html;
+}
+
+function renderFunFacts(){
+  const facts=[
+    {emoji:'🏆',cat:'Dynasty',fact:'Vince Lombardi has won 3 championships (2018*, 2023*, 2025) but needed a co-manager for 2 of them. The man can\'t seem to make it to draft day alone.'},
+    {emoji:'💀',cat:'Futility',fact:'Dan Luczkiewicz (Rasta Grid) has been in the league all 19 seasons since 2007 and has NEVER won a championship. The ultimate bridesmaid with a perfectly .500 record of 152-154.'},
+    {emoji:'📉',cat:'Record Book',fact:'Blunt Ridaz scored just 16.9 points in Week 17 of 2022 — the lowest single-game score in league history. This happened in the 3rd place playoff game.'},
+    {emoji:'🔥',cat:'Record Book',fact:'TERIC beat Rasta Grid 226.7 to 64.3 in Week 10 of 2023 — a 162.4 point margin, the biggest blowout in league history.'},
+    {emoji:'😰',cat:'Nail-Biter',fact:'Three games in league history have been decided by just 0.1 points. The first was Meat Hammers 141.6 vs Daddy\'s Lil Meat Packer 141.5 in Week 4, 2020.'},
+    {emoji:'🏈',cat:'Draft',fact:'Christian McCaffrey was the #1 overall pick FOUR times (2020, 2021, 2022, 2024). RBs have been the top pick in 11 of 14 drafts on record.'},
+    {emoji:'🔄',cat:'Dynasty',fact:'Rob Marsico went back-to-back as champion in 2009 and 2010 with Yung Freezey Baby — then left the league. The only repeat champion in PHFL history.'},
+    {emoji:'💰',cat:'Scoring',fact:'The 2018 season was an offensive explosion — 4 of the top 10 all-time Best Average PPG seasons came from 2018 alone (Whiskey Rebellion 169.8, Blunt Ridaz 162.2, Cuzbo 158.1, Nugg 156.3).'},
+    {emoji:'⚔️',cat:'Rivalry',fact:'THE LORD DOESNT LIVE HERE owns Meat Hammers with an 8-2 all-time record — the most dominant H2H matchup between current teams.'},
+    {emoji:'🏚️',cat:'Turnover',fact:'THE LORD DOESNT LIVE HERE franchise has had 5 different owners in 19 seasons: William Newman, Alan Katsnelson, Jesse Phillips, Paul Pereira, and Christian Curtin.'},
+    {emoji:'🤝',cat:'Ties',fact:'There have been exactly 7 ties in 19 seasons of play. Five of them happened in the first two years (2007-2008). The league hasn\'t seen a tie since 2016.'},
+    {emoji:'📊',cat:'Consistency',fact:'Chris Alves (Portuguese Conquistadors) has been with the same franchise for all 19 seasons — the longest single-owner tenure in the league. His record: 151-155.'},
+    {emoji:'🏆',cat:'Champion',fact:'The 2007 champion Harris/Bodz won the very first PHFL title, beating Speed Racer 104-71. The celebration post from Rasta Grid\'s Dan Luczkiewicz called it "the 2nd biggest upset in league history."'},
+    {emoji:'💣',cat:'Scoring',fact:'The highest-scoring game in league history was Week 3 of 2024: THE LORD DOESNT LIVE HERE 194.5 vs Dont Puka The Bear 237.9 — a combined 432.4 points.'},
+    {emoji:'🥶',cat:'Scoring',fact:'The lowest-scoring game ever was Round Eyed Warriors 34.0 vs Al-Qaeda Ridas 30.0 in Week 6 of 2007. A combined 64 points — less than some teams score individually today.'},
+    {emoji:'👑',cat:'Dominance',fact:'Michael Bolton (Lynchin\' these niggas) has the best career record among long-tenured owners at 142-104 (.577) over 15 seasons. He\'s won 1 championship (2020).'},
+    {emoji:'🎯',cat:'Playoffs',fact:'In 2013, Beli-Check Yo Self beat HYMEN-SMASHERS 194-69 in a consolation game — a 125-point margin. HYMEN-SMASHERS became the Biggest Loser that year.'},
+    {emoji:'📈',cat:'Growth',fact:'Scoring has exploded over the years. In 2007, the highest season total was 2,120 points (Platt). By 2021, Lynchin\' these niggas set the all-time record with 2,819.1.'},
+    {emoji:'🎲',cat:'Draft',fact:'Tom Brady was the #1 overall pick in 2008. Rob Gronkowski went #1 in 2012. Colin Kaepernick went #1 in 2013. The league has always had... interesting draft strategies.'},
+    {emoji:'😈',cat:'Biggest Loser',fact:'Newman holds the distinction of being the very first Biggest Loser in PHFL history (2007), finishing 2-12-1 and losing the Booty Bowl tiebreaker 67-67 "because he\'s a fag."'},
+    {emoji:'🔁',cat:'Franchise',fact:'Brandon McGee has managed the Go Big Birds franchise since 2012 (14 seasons). In that time, his teams have been called Whiskey Rebellion, SGT. Chubby Nigga Big Bird, The Godfather, and Go Big Birds among others.'},
+    {emoji:'🏟️',cat:'Volume',fact:'The PHFL has played 1,842+ games across 19 seasons, processed 2,945 draft picks across 14 recorded drafts, and crowded 228 playoff games. That\'s a LOT of fantasy football.'},
+    {emoji:'⚡',cat:'Scoring',fact:'Backup QB Scout dropped 257.2 points in Week 8 of 2022 — the highest single-game score ever. They went on to lose in the championship 69.1 to The Godfather\'s 157.4.'},
+    {emoji:'🪦',cat:'Gone',fact:'7 of the first 8 champions (2007-2013) are no longer in the league. The "champion\'s curse" didn\'t break until Ya Squad is Booty won in 2014.'},
+    {emoji:'🎭',cat:'Names',fact:'The league has featured some legendary team names: Darlene\'s Cum Dumpsters, Sandy Vag Dump Truck Rentals, Coat Hanger Assassins, and of course, I,NickMaC, Hate NIGGERSjewsSPICS, GAYS, KKKallday.'},
+  ];
+
+  let html=secTitle('Fun Facts','25 Things You Didn\'t Know');
+  html+=`<div style="display:grid;gap:12px">`;
+  facts.forEach((f,i)=>{
+    const colors=['rgba(34,211,238,0.08)','rgba(167,139,250,0.08)','rgba(244,114,182,0.08)','rgba(52,211,153,0.08)','rgba(251,146,60,0.08)','rgba(248,113,113,0.08)'];
+    const borders=['rgba(34,211,238,0.2)','rgba(167,139,250,0.2)','rgba(244,114,182,0.2)','rgba(52,211,153,0.2)','rgba(251,146,60,0.2)','rgba(248,113,113,0.2)'];
+    const ci=i%colors.length;
+    html+=`<div style="padding:18px 20px;border-radius:12px;background:${colors[ci]};border:1px solid ${borders[ci]};display:flex;gap:14px;align-items:flex-start">`;
+    html+=`<div style="font-size:28px;flex-shrink:0;line-height:1">${f.emoji}</div>`;
+    html+=`<div><div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:4px">#${i+1} — ${f.cat}</div>`;
+    html+=`<div style="font-size:14px;color:#e2e8f0;line-height:1.6">${f.fact}</div></div></div>`;
+  });
+  html+=`</div>`;
   return html;
 }
 
