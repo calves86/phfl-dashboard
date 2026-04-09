@@ -93,10 +93,20 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
   .section-title h2{font-size:16px}
   .champ-row{padding:10px 12px}
   .data-table{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .standings-grid{grid-template-columns:24px 4px 1fr 50px 45px;font-size:12px}
-  .standings-grid .hide-mobile{display:none}
-  .standings-grid-25{grid-template-columns:24px 4px 1fr 50px 45px 65px;font-size:12px}
-  .standings-grid-25 .hide-mobile{display:none}
+  .standings-grid .hide-mobile,.standings-grid-25 .hide-mobile{display:none!important}
+  .standings-grid{display:flex!important;flex-wrap:nowrap;font-size:12px;padding:8px 10px;gap:6px}
+  .standings-grid>div:nth-child(1){width:20px;flex-shrink:0}
+  .standings-grid>div:nth-child(2){display:none!important}
+  .standings-grid>div:nth-child(3){flex:1;min-width:0}
+  .standings-grid>div:nth-child(4){width:48px;flex-shrink:0;text-align:center}
+  .standings-grid>div:nth-child(5){width:42px;flex-shrink:0;text-align:center}
+  .standings-grid-25{display:flex!important;flex-wrap:nowrap;font-size:12px;padding:8px 10px;gap:6px}
+  .standings-grid-25>div:nth-child(1){width:20px;flex-shrink:0}
+  .standings-grid-25>div:nth-child(2){display:none!important}
+  .standings-grid-25>div:nth-child(3){flex:1;min-width:0}
+  .standings-grid-25>div:nth-child(4){width:48px;flex-shrink:0;text-align:center}
+  .standings-grid-25>div:nth-child(5){width:42px;flex-shrink:0;text-align:center}
+  .standings-grid-25>div:nth-child(6){width:55px;flex-shrink:0;text-align:right}
   .draft-row{grid-template-columns:40px 35px 1fr 45px;gap:6px;font-size:12px}
   .draft-row>div:last-child{display:none}
   .week-btns{gap:4px}
