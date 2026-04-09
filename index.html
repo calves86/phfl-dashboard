@@ -214,15 +214,59 @@ function renderOverview(){
   const totalGames=DATA.matchups.length;
   const totalDraft=DATA.draft_picks.length;
   
-  // All-time standings from team_yearly
-  const franchises={};
+  // All-time standings by OWNER (not franchise)
+  // Map manager names to canonical owner names
+  const ownerMap={
+    'Chris Alves':'Chris Alves',
+    'dan luczkiewicz':'Dan Luczkiewicz',
+    'Yazan Barqawi':'Yazan Barqawi','Steve Danek, Yazan Barqawi':'Yazan Barqawi','James Whittington, Yazan Barqawi':'Yazan Barqawi',
+    'Michael Bolton':'Michael Bolton',
+    'Brandon McGee':'Brandon McGee',
+    'Vincent Lombardi':'Vince Lombardi','Nick Maccarone, Vincent Lombardi':'Vince Lombardi','Denzel Pitts, Vincent Lombardi':'Vince Lombardi',
+    'Andrew Kramer, Rob Vassallo':'Andrew Kramer / Rob Vassallo','Andrew Kramer, Rob Vassallo, Rob Vassallo':'Andrew Kramer / Rob Vassallo','*, Andrew Kramer, Rob Vassallo':'Andrew Kramer / Rob Vassallo',
+    'Eric Boucher, Terry Ruf':'Eric Boucher / T Ruf','eric Boucher, Terry Ruf':'Eric Boucher / T Ruf','Eric Boucher, T Ruf':'Eric Boucher / T Ruf',
+    'Nick Maccarone':'Nick Maccarone','Nick Mac, Nick Maccarone, Paul Volkwine':'Nick Maccarone',
+    'Alex Settle, Sean McManimon':'Alex Settle / Sean McManimon',
+    'JC Whittington':'JC Whittington',
+    'Tom Evans':'Tom Evans',
+    'jeffrey casalunova':'Jeffrey Casalunova',
+    'rob marsico':'Rob Marsico','Rob marsico':'Rob Marsico','Rob marsico, Tom Evans':'Rob Marsico',
+    'Skooter Williams':'Skooter Williams',
+    'JP Bradley':'JP Bradley',
+    'Dominic Costanzo':'Dominic Costanzo',
+    'ryan platt':'Ryan Platt',
+    'travis hill':'Travis Hill',
+    'Jim Evans':'Jim Evans','alan katsnelson, Jim Evans':'Jim Evans',
+    'PAUL PEREIRA':'Paul Pereira',
+    'Christian Curtin':'Christian Curtin',
+    'William Newman':'William Newman',
+    'alan katsnelson':'Alan Katsnelson',
+    'jesse phillips':'Jesse Phillips',
+    'harris':'Mike Harris','Mike Harris':'Mike Harris',
+    'Young Stunna Boyz':'(Unknown)',
+    'Nick Mattero, Rob Vassallo':'Nick Mattero / Rob Vassallo',
+    'William Hanley':'William Hanley',
+    'eric Boucher':'Eric Boucher',
+    'terry ruf':'Terry Ruf',
+    'eric Boucher, Terry Ruf':'Eric Boucher / T Ruf',
+    'Vince Brindisi':'Vince Brindisi',
+  };
+  const owners={};
   DATA.team_yearly.forEach(r=>{
-    if(!franchises[r.franchise])franchises[r.franchise]={w:0,l:0,t:0,pf:0,pa:0,mgr:r.manager,seasons:0};
-    const f=franchises[r.franchise];
-    f.w+=r.wins;f.l+=r.losses;f.t+=r.ties;f.pf+=r.points_for;f.pa+=r.points_against;f.seasons++;
-    f.mgr=r.manager; // latest manager
+    const owner=ownerMap[r.manager]||r.manager;
+    if(owner==='(Unknown)')return;
+    if(!owners[owner])owners[owner]={w:0,l:0,t:0,pf:0,pa:0,seasons:0,years:[],franchises:new Set()};
+    const o=owners[owner];
+    o.w+=r.wins;o.l+=r.losses;o.t+=r.ties||0;o.pf+=r.points_for;o.pa+=r.points_against;o.seasons++;
+    o.years.push(r.year);
+    o.franchises.add(r.franchise);
   });
-  const allTime=Object.entries(franchises).map(([name,d])=>({name,...d,pct:d.w/(d.w+d.l+d.t)})).sort((a,b)=>b.pct-a.pct);
+  const allTime=Object.entries(owners).map(([name,d])=>{
+    const minY=Math.min(...d.years);const maxY=Math.max(...d.years);
+    return{team_name:name,wins:d.w,losses:d.l,ties:d.t,points_for:d.pf,points_against:d.pa,
+      mgr:`${minY}-${maxY} (${d.seasons}yr)`,
+      franchise:[...d.franchises].join(', '),seasons:d.seasons};
+  }).filter(r=>r.seasons>=1);
 
   let html=secTitle('League Stats','Database');
   html+=`<div class="stat-grid">
@@ -240,9 +284,9 @@ function renderOverview(){
   html+=`<div class="card-grid">${NEVERW.map(nw=>`<div class="ringless-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:6px"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(248,113,113,0.2),rgba(248,113,113,0.05));border:2px solid rgba(248,113,113,0.3);display:flex;align-items:center;justify-content:center;font-size:18px">💀</div><div><div style="font-size:16px;font-weight:700">${nw.m}</div><div style="font-size:12px;color:#94a3b8">${nw.t} — ${nw.s}</div></div></div>${nw.n?`<div style="font-size:12px;color:#f87171;font-style:italic">${nw.n}</div>`:''}</div>`).join('')}</div>`;
 
   if(allTime.length){
-    html+=secTitle('Career Standings','All-Time');
-    const sortedAllTime=sortStandings(allTime.map(r=>({team_name:r.name,wins:r.w,losses:r.l,ties:r.t,points_for:r.pf,points_against:r.pa,mgr:r.mgr})));
-    html+=`<div class="data-table"><div class="standings-grid header-row"><div>#</div><div>Team</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('record')">Record${sortArrow('record')}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('winpct')">Win%${sortArrow('winpct')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pf')">PF${sortArrow('pf')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pa')">PA${sortArrow('pa')}</div><div style="text-align:right;padding-right:8px" class="hide-mobile">Manager</div></div>`;
+    html+=secTitle('Career Standings','By Owner');
+    const sortedAllTime=sortStandings(allTime);
+    html+=`<div class="data-table"><div class="standings-grid header-row"><div>#</div><div>Owner</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('record')">Record${sortArrow('record')}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('winpct')">Win%${sortArrow('winpct')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pf')">PF${sortArrow('pf')}</div><div style="text-align:right;cursor:pointer" class="hide-mobile" onclick="toggleSort('pa')">PA${sortArrow('pa')}</div><div style="text-align:right;padding-right:8px" class="hide-mobile">Seasons</div></div>`;
     sortedAllTime.forEach((r,i)=>{
       const gm=r.wins+r.losses+(r.ties||0);const p=gm>0?(r.wins/gm).toFixed(3):'—';
       html+=`<div class="standings-grid" style="${i%2===0?'background:rgba(255,255,255,0.015)':''}"><div style="font-size:13px;color:#64748b;font-weight:700;text-align:center">${i+1}</div><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${r.ties>0?'-'+r.ties:''}</div><div style="font-size:13px;color:${parseFloat(p)>=0.52?'#22d3ee':'#94a3b8'};text-align:center;font-weight:600">${p}</div><div style="font-size:12px;color:#94a3b8;text-align:right" class="hide-mobile">${Math.round(r.points_for).toLocaleString()}</div><div style="font-size:12px;color:#64748b;text-align:right" class="hide-mobile">${Math.round(r.points_against).toLocaleString()}</div><div style="font-size:11px;color:#475569;text-align:right;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" class="hide-mobile">${r.mgr||''}</div></div>`;
