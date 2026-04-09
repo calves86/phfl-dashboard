@@ -72,7 +72,36 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
 .footer{margin-top:60px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:center;font-size:11px;color:#475569}
 .week-summary{margin-top:20px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px}
 .loading{text-align:center;padding:60px;color:#64748b;font-size:16px}
-@media(max-width:768px){.title{font-size:24px}.playoff-grid{grid-template-columns:1fr}.draft-row{grid-template-columns:40px 40px 1fr 50px}}
+@media(max-width:768px){
+  .title{font-size:22px;letter-spacing:1px}
+  .subtitle{font-size:11px}
+  .header{padding:20px 16px 16px}
+  .header-inner{gap:10px}
+  .logo{font-size:32px}
+  .tabs{padding:0 16px;gap:2px}
+  .tab{padding:6px 12px;font-size:12px}
+  .content{padding:0 16px 40px}
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-card{padding:16px 12px}
+  .stat-val{font-size:28px}
+  .card-grid{grid-template-columns:1fr}
+  .playoff-grid{grid-template-columns:1fr}
+  .matchup-grid{grid-template-columns:1fr}
+  .section-title{margin:30px 0 16px}
+  .section-title h2{font-size:16px}
+  .champ-row{padding:10px 12px}
+  .data-table{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .draft-row{grid-template-columns:40px 35px 1fr 45px;gap:6px;font-size:12px}
+  .draft-row>div:last-child{display:none}
+  .week-btns{gap:4px}
+  .week-btn{width:36px;height:32px;font-size:12px}
+  .sub-tabs{flex-wrap:wrap;gap:6px}
+  .sub-tab{padding:6px 14px;font-size:12px}
+  .record-row{padding:10px 12px;gap:8px}
+  .record-row>div:nth-child(2){font-size:12px}
+  .week-summary{grid-template-columns:1fr;gap:8px}
+  .dynasty-card,.ringless-card{padding:14px 16px}
+}
 </style>
 </head>
 <body>
