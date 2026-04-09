@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playa Hatas Football League</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b1120;color:#e2e8f0;font-family:'DM Sans','Segoe UI',sans-serif;min-height:100vh}
+a{color:#22d3ee;text-decoration:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
+
+.header{background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);border-bottom:1px solid rgba(34,211,238,0.15);padding:32px 24px 24px}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16;flex-wrap:wrap}
+.logo{font-size:42px}
+.title{font-size:36px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:3px;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:14px;color:#64748b;letter-spacing:1px}
+.tabs{display:flex;gap:4px;margin-top:20px;flex-wrap:wrap;max-width:1100px;margin-left:auto;margin-right:auto;padding:0 24px}
+.tab{padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.5px;background:transparent;color:#64748b;font-family:'DM Sans',sans-serif;transition:all .2s}
+.tab.active{background:rgba(34,211,238,0.15);color:#22d3ee}
+.tab:hover{color:#94a3b8}
+.content{max-width:1100px;margin:0 auto;padding:0 24px 60px}
+.section-title{display:flex;align-items:center;gap:12px;margin:44px 0 20px}
+.section-title h2{font-size:20px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px}
+.section-title .badge{font-size:11px;background:rgba(34,211,238,0.15);color:#22d3ee;padding:3px 10px;border-radius:20px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.section-title .line{flex:1;height:1px;background:linear-gradient(90deg,rgba(34,211,238,0.3),transparent)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.stat-card{background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px 20px;text-align:center}
+.stat-val{font-size:36px;font-weight:800;color:#22d3ee;font-family:'Bebas Neue',sans-serif;letter-spacing:2px}
+.stat-label{font-size:13px;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+.stat-sub{font-size:11px;color:#64748b;margin-top:4px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.dynasty-card{padding:18px 20px;border-radius:12px;background:linear-gradient(135deg,rgba(250,204,21,0.06),rgba(255,255,255,0.02));border:1px solid rgba(250,204,21,0.12)}
+.dynasty-card .num{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(250,204,21,0.2),rgba(250,204,21,0.05));border:2px solid rgba(250,204,21,0.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#facc15;font-family:'Bebas Neue',sans-serif}
+.ringless-card{padding:18px 20px;border-radius:12px;background:linear-gradient(135deg,rgba(248,113,113,0.06),rgba(255,255,255,0.02));border:1px solid rgba(248,113,113,0.12)}
+.data-table{background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(255,255,255,0.06);overflow:hidden}
+.data-table .header-row{padding:10px 16px;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.06)}
+.data-row{padding:10px 16px;display:flex;align-items:center;gap:10px}
+.data-row:nth-child(even){background:rgba(255,255,255,0.015)}
+.color-bar{width:4px;height:22px;border-radius:2px;flex-shrink:0}
+.champ-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}
+.matchup-card{background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);font-size:13px}
+.matchup-team{display:flex;justify-content:space-between;padding:8px 12px}
+.matchup-team.winner{background:rgba(34,211,238,0.08);border-left:3px solid #22d3ee}
+.matchup-team.loser{border-left:3px solid transparent}
+.matchup-div{height:1px;background:rgba(255,255,255,0.06)}
+.week-btns{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.week-btn{width:42px;height:36px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);color:#64748b;font-family:'DM Sans',sans-serif}
+.week-btn.active{background:rgba(34,211,238,0.2);color:#22d3ee}
+.sub-tabs{display:flex;gap:8px;margin-bottom:24px}
+.sub-tab{padding:8px 20px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;background:rgba(255,255,255,0.05);color:#64748b;font-family:'DM Sans',sans-serif;text-transform:capitalize}
+.sub-tab.active{background:rgba(34,211,238,0.15);color:#22d3ee}
+select.dropdown{background:rgba(255,255,255,0.05);color:#22d3ee;border:1px solid rgba(34,211,238,0.3);border-radius:10px;padding:10px 40px 10px 16px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2322d3ee' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+select.dropdown option{background:#1e293b;color:#e2e8f0}
+.record-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.record-row:nth-child(even){background:rgba(255,255,255,0.015)}
+.medal{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;font-family:'Bebas Neue',sans-serif}
+.medal-1{background:rgba(250,204,21,0.13);color:#facc15;border:2px solid rgba(250,204,21,0.27)}
+.medal-2{background:rgba(148,163,184,0.13);color:#94a3b8;border:2px solid rgba(148,163,184,0.27)}
+.medal-3{background:rgba(205,127,50,0.13);color:#cd7f32;border:2px solid rgba(205,127,50,0.27)}
+.medal-other{background:rgba(255,255,255,0.03);color:#475569;border:2px solid transparent}
+.draft-row{display:grid;grid-template-columns:50px 50px 1fr 60px 1fr;align-items:center;gap:8px;padding:10px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.draft-row:nth-child(even){background:rgba(255,255,255,0.015)}
+.pos-badge{font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;text-align:center}
+.pos-QB{color:#f472b6;background:rgba(244,114,182,0.12)}.pos-RB{color:#22d3ee;background:rgba(34,211,238,0.12)}
+.pos-WR{color:#34d399;background:rgba(52,211,153,0.12)}.pos-TE{color:#fb923c;background:rgba(251,146,60,0.12)}
+.pos-K{color:#facc15;background:rgba(250,204,21,0.12)}.pos-DST{color:#a78bfa;background:rgba(167,139,250,0.12)}
+.matchup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.playoff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.round-label{font-size:12px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.footer{margin-top:60px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:center;font-size:11px;color:#475569}
+.week-summary{margin-top:20px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px}
+.loading{text-align:center;padding:60px;color:#64748b;font-size:16px}
+@media(max-width:768px){.title{font-size:24px}.playoff-grid{grid-template-columns:1fr}.draft-row{grid-template-columns:40px 40px 1fr 50px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">🏈</div>
+    <div>
+      <div class="title">PLAYA HATAS FOOTBALL LEAGUE</div>
+      <div class="subtitle">EST. 2007 — 19 SEASONS OF HISTORY</div>
+    </div>
+  </div>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="content" id="content"><div class="loading">Loading league data...</div></div>
+<div class="content"><div class="footer">PLAYA HATAS FOOTBALL LEAGUE — Data scraped from CBS Sports — 19 Seasons of History</div></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// STATIC DATA (champions, multi-champs, records)
+// ══════════════════════════════════════════════════
+const CHAMPS=[{y:2007,t:"Harris/Bodz",m:"Mike Harris / Dave Bodner",n:"Left league"},{y:2008,t:"Snakes On A Plane",m:"Dom C",n:"Left league"},{y:2009,t:"Yung Freezey Baby",m:"Rob Marsico",n:"Left league"},{y:2010,t:"Yung Freezey Baby",m:"Rob Marsico",n:"Back-to-back"},{y:2011,t:"Reality Check",m:"Skooter Williams",n:"Left league"},{y:2012,t:"HYMEN-SMASHERS",m:"Travis Hill",n:"Left league"},{y:2013,t:"Sandy Vag Dump Truck Rentals",m:"JP Bradley",n:"Left league"},{y:2014,t:"Ya Squad is Booty",m:"Yazan Barqawi / Steve Danek"},{y:2015,t:"JAMES",m:"Andrew Kramer / Rob Vassallo"},{y:2016,t:"Blunt Ridaz",m:"Yazan Barqawi / JC Whittington"},{y:2017,t:"Portuguese Conquistadors",m:"Chris Alves"},{y:2018,t:"gooksp00kindyH8ters",m:"Nick Maccarone / Vince Lombardi"},{y:2019,t:"SGT. Chubby Nigga Big Bird",m:"Brandon McGee"},{y:2020,t:"Lynchin' these niggas",m:"Michael Bolton"},{y:2021,t:"Binary Biden",m:"Alex Settle / Sean McManimon"},{y:2022,t:"The Godfather",m:"Brandon McGee"},{y:2023,t:"gooksp00kindyH8ters",m:"Denzel Pitts / Vince Lombardi"},{y:2024,t:"TERIC",m:"Eric Boucher"},{y:2025,t:"1-800-ADMIT-IT",m:"Vince Lombardi"}];
+const MULTI=[{m:"Vince Lombardi",t:3,y:"2018*, 2023*, 2025"},{m:"Brandon McGee",t:2,y:"2019, 2022"},{m:"Rob Marsico",t:2,y:"2009, 2010",n:"Back-to-back champ, then left the league"},{m:"Yazan Barqawi",t:2,y:"2014*, 2016*"}];
+const NEVERW=[{m:"Dan Luczkiewicz",t:"Rasta Grid",s:"2007-present",n:"19 seasons. Zero rings. The ultimate bridesmaid."},{m:"Christian Curtin",t:"THE LORD DOESNT LIVE HERE",s:"2022-present"}];
+const PLAYOFF25=[{w:15,r:"QF",t1:"London Bridge",s1:121.9,t2:"TaylorMade",s2:76.5},{w:15,r:"QF",t1:"1-800-ADMIT-IT",s1:163.6,t2:"DARK HENRY",s2:112.8},{w:15,r:"QF",t1:"Blunt Ridaz",s1:205.2,t2:"Portuguese Conquistadors",s2:96.7},{w:15,r:"QF",t1:"Lynchin' these niggas",s1:161.5,t2:"Meat Hammers",s2:133.2},{w:16,r:"SF",t1:"London Bridge",s1:165.6,t2:"Blunt Ridaz",s2:154.6},{w:16,r:"SF",t1:"1-800-ADMIT-IT",s1:125.9,t2:"Lynchin' these niggas",s2:72.3},{w:17,r:"CHAMP",t1:"1-800-ADMIT-IT",s1:131.8,t2:"London Bridge",s2:84.6}];
+
+const REC={"Most Points Scored, Game":[{t:"Backup QB Scout",v:257.2,d:"Wk 8, 2022"},{t:"Darlene's Cum Dumpsters",v:251.0,d:"Wk 11, 2018"},{t:"Blunt Ridaz",v:250.7,d:"Wk 2, 2020"},{t:"Kat's Got My Tongue",v:245.2,d:"Wk 5, 2019"},{t:"Run CMC",v:241.5,d:"Wk 4, 2023"},{t:"Blunt Ridaz",v:238.0,d:"Wk 4, 2018"},{t:"Dont Puka The Bear",v:237.9,d:"Wk 3, 2024"},{t:"Jeff",v:234.5,d:"Wk 5, 2012"},{t:"G00k Sp00k Indy Haters",v:233.4,d:"Wk 3, 2023"},{t:"CuzboTheory",v:233.2,d:"Wk 16, 2021"}],"Fewest Points Scored, Game":[{t:"Blunt Ridaz",v:16.9,d:"Wk 17, 2022"},{t:"Newman",v:20.0,d:"Wk 14, 2007"},{t:"I Want The Gold",v:27.0,d:"Wk 5, 2007"},{t:"Al-Qaeda Ridas",v:27.0,d:"Wk 7, 2007"},{t:"Niglets Wit Attitude",v:28.0,d:"Wk 5, 2007"},{t:"Al-Qaeda Ridas",v:29.0,d:"Wk 5, 2007"},{t:"Al-Qaeda Ridas",v:30.0,d:"Wk 6, 2007"},{t:"Tighty-T & E.Z.E",v:31.5,d:"Wk 16, 2011"},{t:"Round Eyed Warriors",v:34.0,d:"Wk 6, 2007"},{t:"Sickness",v:34.0,d:"Wk 10, 2008"}],"Most Points, Season":[{t:"Lynchin' these niggas",v:2819.1,d:"2021"},{t:"Meat Hammers",v:2817.5,d:"2024"},{t:"Ankle Lox",v:2754.8,d:"2023"},{t:"Blunt Ridaz",v:2740.9,d:"2020"},{t:"Whiskey Rebellion",v:2717.5,d:"2018"},{t:"Lynchin' these niggas",v:2689.6,d:"2020"},{t:"Rasta Grid",v:2666.0,d:"2024"},{t:"TaylorMade",v:2659.0,d:"2025"},{t:"Binary Biden",v:2643.2,d:"2021"},{t:"Rasta Grid",v:2603.6,d:"2021"}],"Most Points Allowed, Season":[{t:"Meat Hammers",v:2555.7,d:"2023"},{t:"TaylorMade",v:2550.5,d:"2025"},{t:"I,NickMaC...",v:2544.1,d:"2023"},{t:"FREE LOMBARDI",v:2532.1,d:"2023"},{t:"The Godfather",v:2527.9,d:"2024"},{t:"Meat Hammers",v:2509.3,d:"2024"},{t:"Run CMC",v:2491.4,d:"2023"},{t:"Portuguese Conquistadors",v:2482.2,d:"2025"},{t:"Ankle Lox",v:2454.6,d:"2024"},{t:"Meat Hammers",v:2445.1,d:"2025"}],"Best Win Pct, Season":[{t:"SGT. Chubby Nigga Big Bird",v:".813",d:"13-3, 2019"},{t:"JAMES",v:".813",d:"13-3, 2015"},{t:"Yung Freezey Baby",v:".813",d:"13-3, 2010"},{t:"COLTS R US",v:".813",d:"13-3, 2010"},{t:"Ankle Lox",v:".778",d:"14-4, 2023"},{t:"Lynchin' these niggas",v:".765",d:"13-4, 2021"},{t:"Lynchin' these niggas",v:".750",d:"12-4, 2020"},{t:"Portuguese Conquistador Champs",v:".750",d:"12-4, 2017"},{t:"HYMEN-SMASHERS",v:".750",d:"12-4, 2012"},{t:"Jeff Fletcher-Baker",v:".750",d:"12-4, 2013"}],"Worst Win Pct, Season":[{t:"Newman",v:".133",d:"2-12, 2007"},{t:"Come Back Killers",v:".188",d:"3-13, 2014"},{t:"Darlene's Cum Dumpsters",v:".200",d:"3-12, 2018"},{t:"Finding Deebo",v:".235",d:"4-13, 2022"},{t:"THE LORD DOESNT LIVE HERE",v:".235",d:"4-13, 2025"},{t:"Ankle Lox",v:".235",d:"4-13, 2024"},{t:"Young Stunna Boyz",v:".250",d:"4-12, 2009"},{t:"Go Big Birds",v:".250",d:"4-12, 2025"},{t:"Demaryius",v:".250",d:"4-12, 2021"},{t:"Snakes On A Plane",v:".267",d:"4-11, 2010"}],"Biggest Blowouts":[{t:"TERIC 226.7 vs Rasta Grid 64.3",v:"+162.4",d:"Wk 10, 2023"},{t:"CuzboTheory 233.2 vs Demaryius 80.5",v:"+152.7",d:"Wk 16, 2021"},{t:"Backup QB Scout 257.2 vs Meat Hammers 111.7",v:"+145.5",d:"Wk 8, 2022"},{t:"G0ok Sp0ok 219.5 vs Come Back Killers 77.5",v:"+142.0",d:"Wk 5, 2014"},{t:"Blunt Ridaz 208.0 vs SGT. Whiskey Reb. 77.6",v:"+130.4",d:"Wk 7, 2020"},{t:"Dont Puka 227.2 vs THE LORD... 97.1",v:"+130.1",d:"Wk 14, 2024"},{t:"Ankle Lox 201.2 vs FREE LOMBARDI 74.0",v:"+127.2",d:"Wk 4, 2023"},{t:"Beli-Check 194.0 vs HYMEN-SMASHERS 69.0",v:"+125.0",d:"Wk 15, 2013"},{t:"Come Back Killers 175.5 vs The MICKS 50.5",v:"+125.0",d:"Wk 14, 2017"},{t:"Wayne's World 224.0 vs Tighty-T 100.0",v:"+124.0",d:"Wk 5, 2012"}],"Closest Games":[{t:"Meat Hammers 141.6 vs Daddy's Lil... 141.5",v:"0.1",d:"Wk 4, 2020"},{t:"oBJs not footjobs 122.6 vs CuzboTheory 122.5",v:"0.1",d:"Wk 11, 2020"},{t:"Let's Go Brandon 173.2 vs Binary Biden 173.1",v:"0.1",d:"Wk 6, 2021"},{t:"Lynchin'... 113.8 vs The Godfather 113.6",v:"0.2",d:"Wk 4, 2022"},{t:"Run CMC 133.2 vs Blunt Ridaz 132.9",v:"0.3",d:"Wk 9, 2023"},{t:"Silky Jacksons 82.5 vs Al-Qaeda Ridas 82.0",v:"0.5",d:"Wk 10, 2011"},{t:"G0ok Sp0ok 126.5 vs Woodchucks 126.0",v:"0.5",d:"Wk 2, 2012"},{t:"G0ok Sp0ok 141.5 vs Yung Freezy Baby 141.0",v:"0.5",d:"Wk 11, 2012"},{t:"Whiskey Reb. 126.5 vs Come Back Killers 126.0",v:"0.5",d:"Wk 10, 2015"},{t:"Your Asiata 121.5 vs Whiskey Reb. 121.0",v:"0.5",d:"Wk 14, 2017"}],"Best Avg PPG":[{t:"Blunt Ridaz",v:"171.3",d:"16 gm, 2020"},{t:"Whiskey Rebellion",v:"169.8",d:"16 gm, 2018"},{t:"Lynchin' these niggas",v:"168.1",d:"16 gm, 2020"},{t:"Lynchin' these niggas",v:"165.8",d:"17 gm, 2021"},{t:"Blunt Ridaz",v:"162.2",d:"16 gm, 2018"},{t:"SGT. Whiskey Rebellion",v:"161.4",d:"16 gm, 2020"},{t:"Cuzbo",v:"158.1",d:"16 gm, 2018"},{t:"TERIC",v:"156.5",d:"16 gm, 2020"},{t:"Meat Hammers",v:"156.5",d:"18 gm, 2024"},{t:"Nugg",v:"156.3",d:"16 gm, 2018"}],"Ties (All-Time)":[{t:"Newman 67.0 vs I Want The Gold 67.0",v:"TIE",d:"Wk 15, 2007"},{t:"Jiggas R' Us 95.0 vs Portuguese Conq. 95.0",v:"TIE",d:"Wk 1, 2008"},{t:"Yung Freezey Baby 113.0 vs BIG E... 113.0",v:"TIE",d:"Wk 2, 2008"},{t:"Purple Mud Monkeys 111.0 vs Al-Qaeda... 111.0",v:"TIE",d:"Wk 5, 2008"},{t:"Portuguese Conq. 103.0 vs Purple Mud... 103.0",v:"TIE",d:"Wk 8, 2008"},{t:"Ya Squad... 98.0 vs Bout that Action 98.0",v:"TIE",d:"Wk 10, 2014"},{t:"gooksp00kIndyH8ters 94.0 vs Cuzbo 94.0",v:"TIE",d:"Wk 14, 2016"}]};
+const REC_CATS=Object.keys(REC);
+
+// ══════════════════════════════════════════════════
+// DATA LOADING
+// ══════════════════════════════════════════════════
+let DATA={standings:[],matchups:[],draft_picks:[],champions:[],team_yearly:[],head_to_head:[]};
+const COLORS=["#22d3ee","#a78bfa","#f472b6","#34d399","#fb923c","#f87171","#60a5fa","#facc15","#c084fc","#4ade80","#e879f9","#38bdf8"];
+function tc(t){let h=0;for(let i=0;i<t.length;i++)h=t.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length]}
+
+async function loadData(){
+  const files=['standings','matchups','draft_picks','champions','team_yearly','head_to_head'];
+  for(const f of files){
+    try{const r=await fetch(`data/${f}.json`);if(r.ok)DATA[f]=await r.json();}catch(e){console.log(`Could not load ${f}:`,e);}
+  }
+  initApp();
+}
+
+// ══════════════════════════════════════════════════
+// APP STATE & RENDERING
+// ══════════════════════════════════════════════════
+let state={tab:'Overview',subTab:'standings',selWeek:1,recIdx:0,draftYear:2025,draftRound:1};
+
+function initApp(){
+  renderTabs();
+  render();
+}
+
+function renderTabs(){
+  const tabs=['Overview','Champions','2025 Season','Record Book','Draft History'];
+  document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="tab ${state.tab===t?'active':''}" onclick="state.tab='${t}';render()">${t}</button>`).join('');
+}
+
+function secTitle(title,accent){return `<div class="section-title"><h2>${title}</h2>${accent?`<span class="badge">${accent}</span>`:''}<div class="line"></div></div>`;}
+
+function matchupCard(a,as,h,hs){
+  const aw=as>hs;
+  return `<div class="matchup-card"><div class="matchup-team ${aw?'winner':'loser'}"><span style="color:${aw?'#e2e8f0':'#64748b'};font-weight:${aw?700:400}">${a}</span><span style="color:${aw?'#22d3ee':'#64748b'};font-weight:700">${as}</span></div><div class="matchup-div"></div><div class="matchup-team ${!aw?'winner':'loser'}"><span style="color:${!aw?'#e2e8f0':'#64748b'};font-weight:${!aw?700:400}">${h}</span><span style="color:${!aw?'#22d3ee':'#64748b'};font-weight:700">${hs}</span></div></div>`;
+}
+
+function render(){
+  renderTabs();
+  const el=document.getElementById('content');
+  
+  if(state.tab==='Overview')el.innerHTML=renderOverview();
+  else if(state.tab==='Champions')el.innerHTML=renderChampions();
+  else if(state.tab==='2025 Season')el.innerHTML=render2025();
+  else if(state.tab==='Record Book')el.innerHTML=renderRecords();
+  else if(state.tab==='Draft History')el.innerHTML=renderDraft();
+}
+
+function renderOverview(){
+  const st=DATA.standings;
+  const totalGames=DATA.matchups.length;
+  const totalDraft=DATA.draft_picks.length;
+  
+  // All-time standings from team_yearly
+  const franchises={};
+  DATA.team_yearly.forEach(r=>{
+    if(!franchises[r.franchise])franchises[r.franchise]={w:0,l:0,t:0,pf:0,pa:0,mgr:r.manager,seasons:0};
+    const f=franchises[r.franchise];
+    f.w+=r.wins;f.l+=r.losses;f.t+=r.ties;f.pf+=r.points_for;f.pa+=r.points_against;f.seasons++;
+    f.mgr=r.manager; // latest manager
+  });
+  const allTime=Object.entries(franchises).map(([name,d])=>({name,...d,pct:d.w/(d.w+d.l+d.t)})).sort((a,b)=>b.pct-a.pct);
+
+  let html=secTitle('League Stats','Database');
+  html+=`<div class="stat-grid">
+    <div class="stat-card"><div class="stat-val">19</div><div class="stat-label">Seasons</div><div class="stat-sub">2007-2025</div></div>
+    <div class="stat-card"><div class="stat-val">${totalGames.toLocaleString()}</div><div class="stat-label">Games Played</div><div class="stat-sub">Regular + Playoff</div></div>
+    <div class="stat-card"><div class="stat-val">${totalDraft.toLocaleString()}</div><div class="stat-label">Draft Picks</div><div class="stat-sub">14 Drafts</div></div>
+    <div class="stat-card"><div class="stat-val">15</div><div class="stat-label">Unique Champions</div><div class="stat-sub">Out of 19 Seasons</div></div>
+  </div>`;
+
+  html+=secTitle('Multiple Championship Owners','Dynasty');
+  html+=`<div class="card-grid">${MULTI.map(mc=>`<div class="dynasty-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><div class="num">${mc.t}</div><div><div style="font-size:16px;font-weight:700">${mc.m}</div><div style="font-size:12px;color:#94a3b8">${mc.y}</div></div></div>${mc.n?`<div style="font-size:12px;color:#64748b;font-style:italic">${mc.n}</div>`:''}</div>`).join('')}</div>`;
+  html+=`<div style="font-size:11px;color:#475569;margin-top:8px;font-style:italic">* = won with a co-manager/partner</div>`;
+
+  html+=secTitle('Never Won a Championship','Ringless');
+  html+=`<div class="card-grid">${NEVERW.map(nw=>`<div class="ringless-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:6px"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(248,113,113,0.2),rgba(248,113,113,0.05));border:2px solid rgba(248,113,113,0.3);display:flex;align-items:center;justify-content:center;font-size:18px">💀</div><div><div style="font-size:16px;font-weight:700">${nw.m}</div><div style="font-size:12px;color:#94a3b8">${nw.t} — ${nw.s}</div></div></div>${nw.n?`<div style="font-size:12px;color:#f87171;font-style:italic">${nw.n}</div>`:''}</div>`).join('')}</div>`;
+
+  if(allTime.length){
+    html+=secTitle('Career Standings','All-Time');
+    html+=`<div class="data-table"><div class="header-row" style="display:grid;grid-template-columns:36px 4px 1fr 80px 70px 90px 90px 1fr"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div><div style="text-align:right;padding-right:8px">Manager</div></div>`;
+    allTime.forEach((r,i)=>{
+      const c=tc(r.name);const p=r.pct.toFixed(3);
+      html+=`<div style="display:grid;grid-template-columns:36px 4px 1fr 80px 70px 90px 90px 1fr;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><div style="font-size:13px;color:#64748b;font-weight:700;text-align:center">${i+1}</div><div class="color-bar" style="background:${c}"></div><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.w}-${r.l}${r.t>0?'-'+r.t:''}</div><div style="font-size:13px;color:${parseFloat(p)>=0.52?'#22d3ee':'#94a3b8'};text-align:center;font-weight:600">${p}</div><div style="font-size:12px;color:#94a3b8;text-align:right">${Math.round(r.pf).toLocaleString()}</div><div style="font-size:12px;color:#64748b;text-align:right">${Math.round(r.pa).toLocaleString()}</div><div style="font-size:11px;color:#475569;text-align:right;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.mgr||''}</div></div>`;
+    });
+    html+=`</div>`;
+  }
+  return html;
+}
+
+function renderChampions(){
+  let html=secTitle('League Champions','19 Seasons');
+  html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:8px">${[...CHAMPS].reverse().map(ch=>{const c=tc(ch.t);return`<div class="champ-row"><div style="font-size:15px;color:#64748b;font-weight:700;min-width:40px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">${ch.y}</div><div class="color-bar" style="background:${c};height:32px"></div><div style="flex:1"><div style="font-size:14px;font-weight:600">${ch.t}</div><div style="font-size:12px;color:#64748b">${ch.m}</div></div>${ch.n==='Back-to-back'?'<span style="font-size:10px;background:rgba(250,204,21,0.15);color:#facc15;padding:2px 8px;border-radius:20px;font-weight:700">REPEAT</span>':''}${ch.n==='Left league'?'<span style="font-size:10px;background:rgba(255,255,255,0.05);color:#475569;padding:2px 8px;border-radius:20px;font-weight:600">GONE</span>':''}</div>`;}).join('')}</div>`;
+  return html;
+}
+
+function render2025(){
+  const subTabs=['standings','weekly','playoffs'];
+  let html=secTitle('2025 Season','Champion: 1-800-ADMIT-IT');
+  html+=`<div class="sub-tabs">${subTabs.map(s=>`<button class="sub-tab ${state.subTab===s?'active':''}" onclick="state.subTab='${s}';render()">${s==='weekly'?'Week-by-Week':s}</button>`).join('')}</div>`;
+
+  if(state.subTab==='standings'){
+    const st25=DATA.standings.filter(r=>r.season===2025).sort((a,b)=>a.rank-b.rank);
+    html+=`<div class="data-table"><div class="header-row" style="display:grid;grid-template-columns:36px 4px 1fr 70px 70px 90px 90px"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div></div>`;
+    st25.forEach((r,i)=>{const c=tc(r.team_name);const p=(r.wins/(r.wins+r.losses)).toFixed(3);
+      html+=`<div style="display:grid;grid-template-columns:36px 4px 1fr 70px 70px 90px 90px;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.02)':''}"><div style="font-size:14px;color:#64748b;font-weight:700;text-align:center">${r.rank}</div><div class="color-bar" style="background:${c};height:24px"></div><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div><div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${r.points_for.toFixed(1)}</div><div style="font-size:13px;color:#64748b;text-align:right">${r.points_against.toFixed(1)}</div></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(state.subTab==='weekly'){
+    const m25=DATA.matchups.filter(r=>r.season===2025&&r.matchup_type==='regular');
+    const weeks=[...new Set(m25.map(r=>r.week))].sort((a,b)=>a-b);
+    html+=`<div class="week-btns">${weeks.map(w=>`<button class="week-btn ${state.selWeek===w?'active':''}" onclick="state.selWeek=${w};render()">${w}</button>`).join('')}</div>`;
+    html+=`<div style="font-size:18px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:16px">WEEK ${state.selWeek} RESULTS</div>`;
+    const wk=m25.filter(r=>r.week===state.selWeek);
+    html+=`<div class="matchup-grid">${wk.map(g=>matchupCard(g.team1_name,g.team1_score,g.team2_name,g.team2_score)).join('')}</div>`;
+    if(wk.length){
+      const scores=wk.flatMap(g=>[{t:g.team1_name,s:g.team1_score},{t:g.team2_name,s:g.team2_score}]);
+      const hi=scores.reduce((a,b)=>b.s>a.s?b:a);
+      const lo=scores.reduce((a,b)=>b.s<a.s?b:a);
+      const diffs=wk.map(g=>Math.abs(g.team1_score-g.team2_score));
+      html+=`<div class="week-summary"><div><span style="color:#64748b">Highest: </span><span style="color:#22d3ee;font-weight:700">${hi.s.toFixed(1)}</span> <span style="color:#475569">${hi.t}</span></div><div><span style="color:#64748b">Lowest: </span><span style="color:#f87171;font-weight:700">${lo.s.toFixed(1)}</span> <span style="color:#475569">${lo.t}</span></div><div><span style="color:#64748b">Closest: </span><span style="color:#34d399;font-weight:700">${Math.min(...diffs).toFixed(1)} pts</span></div><div><span style="color:#64748b">Blowout: </span><span style="color:#fb923c;font-weight:700">${Math.max(...diffs).toFixed(1)} pts</span></div></div>`;
+    }
+  }
+
+  if(state.subTab==='playoffs'){
+    html+=`<div class="playoff-grid">${[{l:"Quarterfinals (Wk 15)",g:PLAYOFF25.filter(g=>g.r==="QF")},{l:"Semifinals (Wk 16)",g:PLAYOFF25.filter(g=>g.r==="SF")},{l:"Championship (Wk 17)",g:PLAYOFF25.filter(g=>g.r==="CHAMP")}].map(round=>`<div><div class="round-label">${round.l}</div><div style="display:flex;flex-direction:column;gap:8px">${round.g.map(g=>matchupCard(g.t1,g.s1,g.t2,g.s2)).join('')}</div></div>`).join('')}</div>`;
+  }
+  return html;
+}
+
+function renderRecords(){
+  let html=secTitle('Record Book','All-Time');
+  html+=`<div style="margin-bottom:24px"><select class="dropdown" onchange="state.recIdx=Number(this.value);render()">${REC_CATS.map((c,i)=>`<option value="${i}" ${state.recIdx===i?'selected':''}>${c}</option>`).join('')}</select></div>`;
+  html+=`<div style="font-size:22px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:16px">${REC_CATS[state.recIdx]}</div>`;
+  const data=REC[REC_CATS[state.recIdx]]||[];
+  html+=`<div class="data-table">${data.map((r,i)=>{const mc=i<3?['medal-1','medal-2','medal-3'][i]:'medal-other';return`<div class="record-row"><div class="medal ${mc}">${i+1}</div><div style="flex:2;font-size:13px;font-weight:600;line-height:1.4">${r.t}</div><div style="flex:0.7;font-size:14px;font-weight:800;color:${i<3?'#22d3ee':'#94a3b8'};text-align:right;font-family:'Bebas Neue',sans-serif;letter-spacing:1px">${typeof r.v==='number'?r.v.toFixed(1):r.v}</div><div style="flex:1;font-size:12px;color:#475569;text-align:right">${r.d}</div></div>`;}).join('')}</div>`;
+  return html;
+}
+
+function renderDraft(){
+  const picks=DATA.draft_picks;
+  const years=[...new Set(picks.map(p=>p.season))].sort((a,b)=>b-a);
+  const yrPicks=picks.filter(p=>p.season===state.draftYear);
+  const rounds=[...new Set(yrPicks.map(p=>p.round))].sort((a,b)=>a-b);
+  const rdPicks=yrPicks.filter(p=>p.round===state.draftRound);
+
+  let html=secTitle('Draft History',`${picks.length} Total Picks`);
+  
+  // Year selector
+  html+=`<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center">`;
+  html+=`<div style="font-size:13px;color:#64748b;font-weight:700">YEAR:</div>`;
+  html+=`<select class="dropdown" style="width:auto;min-width:120px" onchange="state.draftYear=Number(this.value);state.draftRound=1;render()">${years.map(y=>`<option value="${y}" ${state.draftYear===y?'selected':''}>${y}</option>`).join('')}</select>`;
+  html+=`<div style="font-size:13px;color:#64748b;font-weight:700;margin-left:12px">ROUND:</div>`;
+  html+=`<div class="week-btns">${rounds.map(r=>`<button class="week-btn ${state.draftRound===r?'active':''}" onclick="state.draftRound=${r};render()">${r}</button>`).join('')}</div>`;
+  html+=`</div>`;
+
+  html+=`<div style="font-size:18px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;margin-bottom:16px">${state.draftYear} DRAFT — ROUND ${state.draftRound}</div>`;
+
+  html+=`<div class="data-table"><div class="header-row" style="display:grid;grid-template-columns:50px 50px 1fr 60px 1fr"><div>Pick</div><div>Rd</div><div>Player</div><div>Pos</div><div>Team</div></div>`;
+  rdPicks.forEach((p,i)=>{
+    const posClass=`pos-${p.position||''}`;
+    html+=`<div class="draft-row"><div style="font-size:15px;color:#64748b;font-weight:700;font-family:'Bebas Neue',sans-serif">${p.pick}</div><div style="font-size:13px;color:#475569">${p.round}</div><div style="font-size:14px;font-weight:700">${p.player_name}</div><div><span class="pos-badge ${posClass}">${p.position||'—'}</span></div><div style="font-size:13px;color:#64748b">${p.team_name}</div></div>`;
+  });
+  html+=`</div>`;
+
+  // Draft summary
+  if(yrPicks.length){
+    const posCounts={};
+    yrPicks.forEach(p=>{const pos=p.position||'?';posCounts[pos]=(posCounts[pos]||0)+1;});
+    html+=`<div style="margin-top:20px;padding:16px;border-radius:10px;background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);font-size:13px;color:#94a3b8">`;
+    html+=`<strong style="color:#22d3ee">${state.draftYear} Draft Summary:</strong> ${yrPicks.length} picks across ${rounds.length} rounds. `;
+    html+=`Position breakdown: ${Object.entries(posCounts).sort((a,b)=>b[1]-a[1]).map(([p,c])=>`${p}: ${c}`).join(', ')}`;
+    html+=`</div>`;
+  }
+
+  return html;
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+loadData();
+</script>
+</body>
+</html>
