@@ -72,6 +72,8 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
 .footer{margin-top:60px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:center;font-size:11px;color:#475569}
 .week-summary{margin-top:20px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px}
 .loading{text-align:center;padding:60px;color:#64748b;font-size:16px}
+.standings-grid{display:grid;grid-template-columns:30px 4px 1fr 65px 55px 75px 75px 1fr;align-items:center;padding:10px 16px}
+.standings-grid-25{display:grid;grid-template-columns:30px 4px 1fr 60px 55px 80px 80px;align-items:center;padding:10px 16px}
 @media(max-width:768px){
   .title{font-size:22px;letter-spacing:1px}
   .subtitle{font-size:11px}
@@ -91,6 +93,10 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
   .section-title h2{font-size:16px}
   .champ-row{padding:10px 12px}
   .data-table{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .standings-grid{grid-template-columns:24px 4px 1fr 50px 45px;font-size:12px}
+  .standings-grid .hide-mobile{display:none}
+  .standings-grid-25{grid-template-columns:24px 4px 1fr 50px 45px 65px;font-size:12px}
+  .standings-grid-25 .hide-mobile{display:none}
   .draft-row{grid-template-columns:40px 35px 1fr 45px;gap:6px;font-size:12px}
   .draft-row>div:last-child{display:none}
   .week-btns{gap:4px}
@@ -210,10 +216,10 @@ function renderOverview(){
 
   if(allTime.length){
     html+=secTitle('Career Standings','All-Time');
-    html+=`<div class="data-table"><div class="header-row" style="display:grid;grid-template-columns:36px 4px 1fr 80px 70px 90px 90px 1fr"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div><div style="text-align:right;padding-right:8px">Manager</div></div>`;
+    html+=`<div class="data-table"><div class="standings-grid header-row"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right" class="hide-mobile">PF</div><div style="text-align:right" class="hide-mobile">PA</div><div style="text-align:right;padding-right:8px" class="hide-mobile">Manager</div></div>`;
     allTime.forEach((r,i)=>{
       const c=tc(r.name);const p=r.pct.toFixed(3);
-      html+=`<div style="display:grid;grid-template-columns:36px 4px 1fr 80px 70px 90px 90px 1fr;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.015)':''}"><div style="font-size:13px;color:#64748b;font-weight:700;text-align:center">${i+1}</div><div class="color-bar" style="background:${c}"></div><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.w}-${r.l}${r.t>0?'-'+r.t:''}</div><div style="font-size:13px;color:${parseFloat(p)>=0.52?'#22d3ee':'#94a3b8'};text-align:center;font-weight:600">${p}</div><div style="font-size:12px;color:#94a3b8;text-align:right">${Math.round(r.pf).toLocaleString()}</div><div style="font-size:12px;color:#64748b;text-align:right">${Math.round(r.pa).toLocaleString()}</div><div style="font-size:11px;color:#475569;text-align:right;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.mgr||''}</div></div>`;
+      html+=`<div class="standings-grid" style="${i%2===0?'background:rgba(255,255,255,0.015)':''}"><div style="font-size:13px;color:#64748b;font-weight:700;text-align:center">${i+1}</div><div class="color-bar" style="background:${c}"></div><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.w}-${r.l}${r.t>0?'-'+r.t:''}</div><div style="font-size:13px;color:${parseFloat(p)>=0.52?'#22d3ee':'#94a3b8'};text-align:center;font-weight:600">${p}</div><div style="font-size:12px;color:#94a3b8;text-align:right" class="hide-mobile">${Math.round(r.pf).toLocaleString()}</div><div style="font-size:12px;color:#64748b;text-align:right" class="hide-mobile">${Math.round(r.pa).toLocaleString()}</div><div style="font-size:11px;color:#475569;text-align:right;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" class="hide-mobile">${r.mgr||''}</div></div>`;
     });
     html+=`</div>`;
   }
@@ -233,9 +239,9 @@ function render2025(){
 
   if(state.subTab==='standings'){
     const st25=DATA.standings.filter(r=>r.season===2025).sort((a,b)=>a.rank-b.rank);
-    html+=`<div class="data-table"><div class="header-row" style="display:grid;grid-template-columns:36px 4px 1fr 70px 70px 90px 90px"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div></div>`;
+    html+=`<div class="data-table"><div class="standings-grid-25 header-row"><div>#</div><div></div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:right">PF</div><div style="text-align:right" class="hide-mobile">PA</div></div>`;
     st25.forEach((r,i)=>{const c=tc(r.team_name);const p=(r.wins/(r.wins+r.losses)).toFixed(3);
-      html+=`<div style="display:grid;grid-template-columns:36px 4px 1fr 70px 70px 90px 90px;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.02)':''}"><div style="font-size:14px;color:#64748b;font-weight:700;text-align:center">${r.rank}</div><div class="color-bar" style="background:${c};height:24px"></div><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div><div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${r.points_for.toFixed(1)}</div><div style="font-size:13px;color:#64748b;text-align:right">${r.points_against.toFixed(1)}</div></div>`;
+      html+=`<div class="standings-grid-25" style="${i%2===0?'background:rgba(255,255,255,0.02)':''}"><div style="font-size:14px;color:#64748b;font-weight:700;text-align:center">${r.rank}</div><div class="color-bar" style="background:${c};height:24px"></div><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}</div><div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div><div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${r.points_for.toFixed(1)}</div><div style="font-size:13px;color:#64748b;text-align:right" class="hide-mobile">${r.points_against.toFixed(1)}</div></div>`;
     });
     html+=`</div>`;
   }
