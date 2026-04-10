@@ -178,6 +178,13 @@ DATA["playoff_games"]=[{"id":1,"season":2007,"round":1,"round_name":"Quarterfina
 
 
 
+
+
+
+
+
+
+
 const COLORS=["#22d3ee","#a78bfa","#f472b6","#34d399","#fb923c","#f87171","#60a5fa","#facc15","#c084fc","#4ade80","#e879f9","#38bdf8"];
 function tc(t){let h=0;for(let i=0;i<t.length;i++)h=t.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length]}
 
@@ -912,7 +919,7 @@ function renderH2H(){
 }
 
 const PHFL_TEAM_FACTS={
-  '1-800-ADMIT-IT':{label:'1-800-ADMIT-IT',emoji:'📞',color:'#f97316',facts:[
+  '1-800-ADMIT-IT':{label:'1-800-ADMIT-IT',logo:'1800admitit-logo.jpg',color:'#f97316',facts:[
     {emoji:'🏆',cat:'2025 Champ',fact:`1-800-ADMIT-IT (Vince Lombardi) won the 2025 PHFL championship — the franchise's first title as a solo operation. Lombardi had previously co-managed to two titles but the 2025 ring was his alone. The name finally has a ring to go with the swagger.`},
     {emoji:'🤝',cat:'Co-Manager History',fact:`Vince Lombardi has won three PHFL championships (2018, 2023, 2025) but needed a co-manager for two of them. The 2025 title was the first he won flying solo. Whatever he was doing differently, it worked.`},
     {emoji:'📅',cat:'Longevity',fact:`The 1-800-ADMIT-IT franchise has been in the PHFL since 2012 — 14 seasons and counting. They've won a championship in the most recent full season on record. If you're looking for a late-career hot streak, this is it.`},
@@ -924,7 +931,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'🏈',cat:'Playoff Run',fact:`The 2025 playoff run for 1-800-ADMIT-IT ended in a championship victory over London Bridge. They had to beat multiple playoff-caliber teams to get there. When the bracket shook out, they were standing at the end.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Three PHFL championships (2018, 2023, 2025) — two with co-management, one solo. No active franchise has won more recently. The 1-800-ADMIT-IT era in PHFL may just be getting started.`},
   ]},
-  'Blunt Ridaz':{label:'Blunt Ridaz',emoji:'🌿',color:'#4ade80',facts:[
+  'Blunt Ridaz':{label:'Blunt Ridaz',logo:'bluntridaz-logo.jpg',color:'#4ade80',facts:[
     {emoji:'🏆',cat:'Two Rings',fact:`Blunt Ridaz (Yazan Barqawi) has won two PHFL championships — in 2014 and 2016. Both titles came in a three-year window that established the franchise as a dynasty contender. No other active franchise has won more total rings than Blunt Ridaz.`},
     {emoji:'📅',cat:'Day One',fact:`Blunt Ridaz has been in the PHFL since 2007 — one of the original founding franchises. Through 19 seasons they've seen every era of the league: the low-scoring years, the CMC era, the chaos years. They've won twice and show no signs of stopping.`},
     {emoji:'📉',cat:'Low Score Record',fact:`Blunt Ridaz scored just 16.9 points in the 3rd place playoff game in Week 17 of 2022 — the lowest single-game score in league history. A 2-time champion scoring 16.9 points is one of the great contradictions in PHFL history.`},
@@ -936,7 +943,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'🏈',cat:'Draft',fact:`Blunt Ridaz was one of the franchises most likely to make bold draft-day decisions in the mid-2010s. The 2014 and 2016 rosters were built around smart early picks and strategic waiver wire use — a formula that produced back-to-back titles in a three-year span.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Two championships (2014, 2016), 19 seasons of membership, a historically low-scoring playoff game balanced against an explosive scoring season — Blunt Ridaz contains multitudes. The franchise is one of the defining stories of the PHFL's first two decades.`},
   ]},
-  'DARK HENRY':{label:'DARK HENRY',emoji:'🖤',color:'#a78bfa',facts:[
+  'DARK HENRY':{label:'DARK HENRY',logo:'darkhenry-logo.jpg',color:'#a78bfa',facts:[
     {emoji:'🏆',cat:'2015 Champ',fact:`DARK HENRY (Andrew Kramer / Rob Vassallo) won the 2015 PHFL championship — the franchise's only title to date. It came in just their second season in the league, making them one of the fastest franchises to win a ring after joining the PHFL.`},
     {emoji:'📅',cat:'Joined 2014',fact:`DARK HENRY joined the PHFL in 2014 and won a championship in 2015 — a one-year turnaround from entry to ring. Only a handful of franchises in PHFL history have won this quickly after joining. The learning curve was short.`},
     {emoji:'📊',cat:'Record',fact:`Over 12 seasons, DARK HENRY holds a 98-97 record — essentially .500 for their entire tenure. The championship in 2015 represents the highest peak of a franchise that has been competitive but not dominant in most years.`},
@@ -948,7 +955,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'💥',cat:'Peak Season',fact:`The 2015 season was DARK HENRY's defining year — a combination of draft success, smart in-season moves, and playoff performance that aligned perfectly. It hasn't been replicated since, but the banner is permanent.`},
     {emoji:'🏛️',cat:'Legacy',fact:`DARK HENRY: one championship in 12 seasons, fastest ring after joining the league, 12-season wait for a second. The franchise exists in the category of "one ring and still hunting" — a category that includes legends and near-legends alike.`},
   ]},
-  'Go Big Birds':{label:'Go Big Birds',emoji:'🦅',color:'#60a5fa',facts:[
+  'Go Big Birds':{label:'Go Big Birds',logo:'gobigbirds-logo.png',color:'#60a5fa',facts:[
     {emoji:'🏆',cat:'Two Rings',fact:`Go Big Birds (Brandon McGee) has won two PHFL championships — in 2019 and 2022. Both titles came under different team names: the 2019 championship as one iteration, the 2022 championship as The Godfather. The franchise keeps winning regardless of what it's called.`},
     {emoji:'📅',cat:'Day One',fact:`The Go Big Birds franchise has been in the PHFL since 2007 — one of the original 12. Brandon McGee has managed it for 14 seasons (since 2012). Through multiple name changes and roster overhauls, the franchise has been one of the most active presences in the league.`},
     {emoji:'🎭',cat:'Name Changes',fact:`Go Big Birds has gone through multiple team names over the years: Whiskey Rebellion, SGT. Chubby Nigga Big Bird, The Godfather, and Go Big Birds among them. The 2022 championship came under The Godfather name. Whatever the brand, the wins follow.`},
@@ -960,7 +967,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'🎯',cat:'Seedings',fact:`Go Big Birds has won championships from multiple seed positions — not always as the favorite, not always as the underdog. Their playoff success comes from adaptability rather than regular season dominance. They peak when it matters.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Two championships (2019, 2022), 19 seasons, the all-time single-season PPG record (169.8 in 2018), and one of the deepest name histories in the league. Go Big Birds is a cornerstone PHFL franchise. Brandon McGee has been flying this thing for 14 years.`},
   ]},
-  'London Bridge':{label:'London Bridge',emoji:'🌉',color:'#38bdf8',facts:[
+  'London Bridge':{label:'London Bridge',logo:'londonbridge-logo.jpg',color:'#38bdf8',facts:[
     {emoji:'🏆',cat:'Two Early Rings',fact:`London Bridge (Nick Maccarone) won the PHFL championship in 2007 — the very first season — and again in 2012. Two titles in the league's first six years established the franchise as an early dynasty. The founding champion still has skin in the game.`},
     {emoji:'🥈',cat:'2025 Runner-Up',fact:`London Bridge finished as runner-up in 2025, losing the championship game to 1-800-ADMIT-IT. The near-miss in the league's most recent season is a reminder that this franchise hasn't stopped competing. 13 years between rings didn't slow them down.`},
     {emoji:'📅',cat:'Day One',fact:`London Bridge has been in the PHFL since 2007 — a founding franchise across all 19 seasons. Nick Maccarone is one of only a handful of owners who have been there since the very beginning and are still active. Two rings and still running.`},
@@ -972,7 +979,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'🔥',cat:'2025 Run',fact:`The 2025 runner-up finish means London Bridge was the second-best team in the PHFL in the most recent season. That's not a consolation — that's a statement. One more win and they'd have had three rings. They'll be back.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Two championships (2007, 2012), 19 seasons, the distinction of being the original PHFL champion, and a 2025 runner-up finish. London Bridge is one of the few founding franchises still standing — and still winning rounds in January.`},
   ]},
-  "Lynchin' these niggas":{label:"Lynchin' these niggas",emoji:'👑',color:'#facc15',facts:[
+  "Lynchin' these niggas":{label:"Lynchin' these niggas",logo:'lynchin-logo.jpg',color:'#facc15',facts:[
     {emoji:'🏆',cat:'Three Rings',fact:`Lynchin' these niggas (Michael Bolton) has won three PHFL championships — in 2009, 2010, and 2020. The first two were back-to-back, the third came a decade later. Three rings makes this the most decorated active franchise in PHFL history by total hardware.`},
     {emoji:'🔄',cat:'Back-to-Back',fact:`Michael Bolton's franchise won back-to-back PHFL championships in 2009 and 2010 under the name Yung Freezey Baby — the only consecutive titles in league history under a single owner. No one has repeated as champion since.`},
     {emoji:'📊',cat:'Best Record',fact:`With a 176-133 career record (.570 win percentage), Lynchin' these niggas holds the best all-time record among long-tenured PHFL franchises. The most wins in league history. The most championships. The numbers line up.`},
@@ -984,7 +991,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'😤',cat:'Near Misses',fact:`Even with three rings, Lynchin' these niggas has had multiple deep playoff runs that fell short. The 2021 season — when they set the all-time scoring record — produced no championship. Scoring the most points in a season does not guarantee anything.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Three PHFL championships (2009, 2010, 2020). Best all-time win percentage. All-time season scoring record. Founding member. Back-to-back titles. There's no single metric where Lynchin' these niggas doesn't rank near the top. The most accomplished franchise in PHFL history.`},
   ]},
-  'Meat Hammers':{label:'Meat Hammers',emoji:'🔨',color:'#fb923c',facts:[
+  'Meat Hammers':{label:'Meat Hammers',logo:'meathammers-logo.jpg',color:'#fb923c',facts:[
     {emoji:'💀',cat:'No Rings Yet',fact:`Meat Hammers (JC Whittington) has been in the PHFL since 2018 — 8 seasons — without a championship. In a league with 19 seasons of history, they're still in the early-to-mid portion of their franchise arc. The ring drought is real but not yet historic.`},
     {emoji:'📅',cat:'Joined 2018',fact:`Meat Hammers entered the PHFL in 2018 and have been one of the more consistent franchises since joining. Their 68-68 record is a perfect .500 — the most mathematically even franchise record in the league. Equal parts winning and losing.`},
     {emoji:'😰',cat:'0.1 Point Game',fact:`Meat Hammers were involved in one of the closest games in PHFL history: Meat Hammers 141.6 vs Daddy's Lil Meat Packer 141.5 in Week 4 of 2020 — decided by 0.1 points. The league has seen three 0.1-point games, and Meat Hammers were in the first one.`},
@@ -996,7 +1003,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'🔥',cat:'Recent Seasons',fact:`Meat Hammers' recent seasons have shown improvement in both roster construction and in-game decision-making. The .500 record across 8 seasons may not reflect their actual trajectory — newer seasons are trending better than older ones.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Meat Hammers is still writing their story. Eight seasons, zero rings, a perfect .500 record, and one of the closest games in league history. The foundation is there. The ring is the next chapter.`},
   ]},
-  'Portuguese Conquistadors':{label:'Portuguese Conquistadors',emoji:'⚓',color:'#f472b6',facts:[
+  'Portuguese Conquistadors':{label:'Portuguese Conquistadors',logo:'portuguese-logo.png',color:'#f472b6',facts:[
     {emoji:'🏆',cat:'2017 Champ',fact:`Portuguese Conquistadors (Chris Alves) won the 2017 PHFL championship — a ring that came in Year 11 of the franchise's history. The wait made it sweeter. Chris Alves had been in the league since 2007 and finally got the hardware in 2017.`},
     {emoji:'📅',cat:'19 Seasons',fact:`Chris Alves has been with the Portuguese Conquistadors franchise for all 19 PHFL seasons since 2007 — the longest uninterrupted single-owner tenure in league history. Same person, same franchise, 19 years. No other active owner has been here that long without missing a season.`},
     {emoji:'📊',cat:'Record',fact:`Over 19 seasons, the franchise holds a 151-155 record — just below .500. One championship in 19 seasons against a slightly losing record tells the story of a franchise that competes every year but has only cracked the ceiling once.`},
@@ -1008,7 +1015,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'😤',cat:'Post-Ring',fact:`After winning in 2017, Portuguese Conquistadors have been chasing a second ring for 8 years without success — including the Biggest Loser finish in 2023. The post-championship slump is real. The comeback attempt is ongoing.`},
     {emoji:'🏛️',cat:'Legacy',fact:`One championship (2017), 19 seasons, the longest single-owner tenure in PHFL history, and a Biggest Loser trophy to complete the collection. Chris Alves has seen more PHFL history from the inside than anyone. The legacy is about endurance as much as winning.`},
   ]},
-  'Rasta Grid':{label:'Rasta Grid',emoji:'🎵',color:'#34d399',facts:[
+  'Rasta Grid':{label:'Rasta Grid',logo:'rastagrid-logo.jpg',color:'#34d399',facts:[
     {emoji:'💀',cat:'The Eternal Bridesmaid',fact:`Dan Luczkiewicz (Rasta Grid) has been in the PHFL for all 19 seasons since 2007 and has never won a championship. With a 152-154 career record, he is the longest-tenured ringless franchise in league history. The universe keeps finding new ways to say no.`},
     {emoji:'🥈',cat:'2024 Runner-Up',fact:`In 2024, Rasta Grid finished as runner-up — losing the championship game to TERIC. It was one of the closest things to a ring Dan Luczkiewicz has ever had. The second-place trophy went on the shelf next to 18 years of other second-place-and-worse finishes.`},
     {emoji:'📅',cat:'19 Years',fact:`Rasta Grid has been in the PHFL since 2007 — a founding franchise. Dan Luczkiewicz is one of only four owners who have never missed a season. His 19-year ringless streak is the most remarkable futility story in a league full of them.`},
@@ -1020,7 +1027,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'😤',cat:'2024',fact:`The 2024 season was Rasta Grid's best chance in franchise history — a runner-up finish and a championship game appearance. TERIC won the title. Dan Luczkiewicz added another silver to the collection. If it doesn't happen in 2025 or beyond, the drought becomes the story. It already is.`},
     {emoji:'🏛️',cat:'Legacy',fact:`Rasta Grid's legacy in the PHFL is unique: 19 seasons, never won, always competitive, one runner-up. Dan Luczkiewicz is the player who makes everyone else feel better about their own seasons. The ring will come, or it won't. Either way, the story is already legendary.`},
   ]},
-  'TERIC':{label:'TERIC',emoji:'⚡',color:'#22d3ee',facts:[
+  'TERIC':{label:'TERIC',logo:'teric-logo.jpg',color:'#22d3ee',facts:[
     {emoji:'🏆',cat:'2024 Champ',fact:`TERIC (Eric Boucher / T Ruf) won the 2024 PHFL championship — the franchise's first title after 18 seasons in the league. The wait was among the longest for any eventual champion in PHFL history. The ring finally came in Year 18.`},
     {emoji:'📅',cat:'Day One',fact:`TERIC has been in the PHFL since 2007 — a founding franchise all 19 seasons. 18 years of competing before finally winning. That kind of patience and persistence defines a certain kind of champion — the ones who refused to give up.`},
     {emoji:'🔥',cat:'Biggest Blowout',fact:`In Week 10 of 2023, TERIC beat Rasta Grid 226.7 to 64.3 — a 162.4-point margin, the biggest blowout in PHFL history. The most dominant single-game performance ever recorded came from TERIC, one year before they won the championship.`},
@@ -1032,7 +1039,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'💥',cat:'2023 into 2024',fact:`The biggest blowout in PHFL history (2023) followed by the championship (2024) makes the TERIC two-year run one of the most dramatic stretches of any franchise. From 226-point beatdown to championship ring in 12 months.`},
     {emoji:'🏛️',cat:'Legacy',fact:`One championship (2024) after 18 years of waiting, the biggest blowout in PHFL history, a Booty Bowl in 2025, and 19 seasons of founding-member presence. TERIC's legacy is about what happens when patience and preparation finally align. Year 18 was their year.`},
   ]},
-  'THE LORD DOESNT LIVE HERE':{label:'THE LORD DOESNT LIVE HERE',emoji:'🏚️',color:'#f87171',facts:[
+  'THE LORD DOESNT LIVE HERE':{label:'THE LORD DOESNT LIVE HERE',logo:'thelorddoesntlivehere-logo.jpg',color:'#f87171',facts:[
     {emoji:'💀',cat:'No Ring Yet',fact:`THE LORD DOESNT LIVE HERE has been in the PHFL since 2007 — a founding franchise across all 19 seasons — without a championship. With 5 different owners and a 123-178 all-time record, the franchise has been defined more by ownership instability than championship glory.`},
     {emoji:'👥',cat:'5 Owners',fact:`THE LORD DOESNT LIVE HERE is the only PHFL franchise to have had 5 different owners in its history: William Newman, Alan Katsnelson, Jesse Phillips, Paul Pereira, and Christian Curtin. The name stayed the same. The person behind it kept changing. The ring remained elusive through all five.`},
     {emoji:'📊',cat:'Record',fact:`A 123-178 career record over 19 seasons is the worst all-time record among founding franchises still in the league. The franchise has been below .500 in most seasons — a .409 winning percentage across nearly two decades. The most losses of any current team.`},
@@ -1044,7 +1051,7 @@ const PHFL_TEAM_FACTS={
     {emoji:'🔥',cat:'Upside',fact:`A franchise with a .409 win percentage over 19 seasons that can still put up 194 points in a single game has explosive upside. The problem isn't the ceiling. It's the consistency. With a motivated owner, the name could finally mean something other than a punchline.`},
     {emoji:'🏛️',cat:'Legacy',fact:`THE LORD DOESNT LIVE HERE: 5 owners, 19 seasons, no championships, the most losses in PHFL history, and the most memorable team name in a league full of them. The franchise is a PHFL institution — not for winning, but for surviving and staying relevant through all of it.`},
   ]},
-  'TaylorMade':{label:'TaylorMade',emoji:'🏌️',color:'#c084fc',facts:[
+  'TaylorMade':{label:'TaylorMade',logo:'taylormade-logo.jpg',color:'#c084fc',facts:[
     {emoji:'🏆',cat:'Two Rings',fact:`TaylorMade (Alex Settle / Sean McManimon) has won two PHFL championships — in 2008 and 2021. The 13-year gap between titles is the longest between championships for any multi-ring franchise in league history. Long gaps don't erase rings.`},
     {emoji:'📅',cat:'Day One',fact:`TaylorMade has been in the PHFL since 2007 — a founding franchise across all 19 seasons. Two championships and 19 years of continuous membership puts them in the upper tier of PHFL franchise longevity and success.`},
     {emoji:'📊',cat:'Record',fact:`With a 157-150 career record over 19 seasons, TaylorMade has been consistently above .500 — one of the better long-term records among founding franchises. Two rings and a winning record make the resume strong.`},
@@ -1097,7 +1104,7 @@ function renderFunFacts(){
   // ── Team Facts view ────────────────────────────���─────────────────────────
   if(selectedTeam && PHFL_TEAM_FACTS[selectedTeam]){
     const tf=PHFL_TEAM_FACTS[selectedTeam];
-    let html=secTitle('Fun Facts',`${tf.emoji} ${tf.label}`);
+    let html=secTitle('Fun Facts',`<img src="team-logo/${tf.logo}" style="height:32px;width:auto;max-width:40px;object-fit:contain;border-radius:5px;vertical-align:middle;margin-right:8px">${tf.label}`);
     html+=`<div style="margin-bottom:18px">`;
     html+=`<button onclick="state.factTeam=null;render()" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">← Back to Fun Facts</button>`;
     html+=`</div>`;
@@ -1126,7 +1133,7 @@ function renderFunFacts(){
   html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">`;
   Object.entries(PHFL_TEAM_FACTS).forEach(([key,tf])=>{
     html+=`<button onclick="state.factTeam='${key.replace(/'/g,"\\'")}';render()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px 12px;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px">`;
-    html+=`<div style="font-size:24px">${tf.emoji}</div>`;
+    html+=`<img src="team-logo/${tf.logo}" style="height:52px;width:auto;max-width:72px;object-fit:contain;border-radius:6px">`;
     html+=`<div style="font-size:11px;font-weight:700;color:${tf.color};line-height:1.3">${tf.label}</div>`;
     html+=`</button>`;
   });
