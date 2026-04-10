@@ -185,6 +185,13 @@ DATA["playoff_games"]=[{"id":1,"season":2007,"round":1,"round_name":"Quarterfina
 
 
 
+
+
+
+
+
+
+
 const COLORS=["#22d3ee","#a78bfa","#f472b6","#34d399","#fb923c","#f87171","#60a5fa","#facc15","#c084fc","#4ade80","#e879f9","#38bdf8"];
 function tc(t){let h=0;for(let i=0;i<t.length;i++)h=t.charCodeAt(i)+((h<<5)-h);return COLORS[Math.abs(h)%COLORS.length]}
 
@@ -245,14 +252,13 @@ function getPlayoffSeeds(season){
     rec[a].pf+=as;rec[b].pf+=bs;
   });
 
-  // Sort within win groups: H2H sum vs group, then PF
+  // Sort within win groups: PF tiebreaker (CBS PHFL uses total points, not H2H)
   const byWins={};
   teams.forEach(t=>{const w=rec[t].wins;(byWins[w]=byWins[w]||[]).push(t);});
   const sorted=[];
   Object.keys(byWins).sort((a,b)=>b-a).forEach(w=>{
     const grp=byWins[w];
-    const h2hSum=t=>grp.reduce((s,o)=>o!==t?s+(rec[t].h2hWins[o]||0):s,0);
-    const sg=grp.slice().sort((a,b)=>{const ha=h2hSum(a),hb=h2hSum(b);return hb!==ha?hb-ha:rec[b].pf-rec[a].pf;});
+    const sg=grp.slice().sort((a,b)=>rec[b].pf-rec[a].pf);
     sorted.push(...sg);
   });
 
