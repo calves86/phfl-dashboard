@@ -12,7 +12,7 @@ a{color:#22d3ee;text-decoration:none}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
 
 .header{background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a);border-bottom:1px solid rgba(34,211,238,0.15);padding:32px 24px 24px}
-.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16;flex-wrap:wrap}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .logo{font-size:42px}
 .title{font-size:36px;font-weight:800;font-family:'Bebas Neue',sans-serif;letter-spacing:3px;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .subtitle{font-size:14px;color:#64748b;letter-spacing:1px}
@@ -116,6 +116,21 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
   .record-row>div:nth-child(2){font-size:12px}
   .week-summary{grid-template-columns:1fr;gap:8px}
   .dynasty-card,.ringless-card{padding:14px 16px}
+
+  /* Tabs: horizontal scroll instead of wrapping */
+  .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:6px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex-shrink:0}
+  /* Sub-tabs: also scroll */
+  .sub-tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .sub-tabs::-webkit-scrollbar{display:none}
+  .sub-tab{flex-shrink:0;white-space:nowrap}
+  /* Week buttons: scroll not wrap */
+  .week-btns{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
+  .week-btns::-webkit-scrollbar{display:none}
+  /* Wide grids inside data-table scroll horizontally */
+  .scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .scroll-inner{min-width:640px}
 }
 </style>
 </head>
@@ -293,14 +308,14 @@ function renderTeams(){
         </div>`:''}
       </div>
     </div>`;
-    html+=`<div class="data-table">
-      <div style="display:grid;grid-template-columns:55px 1fr 1fr 85px 85px 85px 160px;align-items:center;padding:8px 16px" class="header-row">
+    html+=`<div class="scroll-wrap"><div class="scroll-inner"><div class="data-table">
+      <div style="display:grid;grid-template-columns:55px 185px 170px 80px 80px 80px 145px;align-items:center;padding:8px 16px" class="header-row">
         <div>Year</div><div>Team Name</div><div>Manager(s)</div><div style="text-align:center">Record</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div><div>Result</div>
       </div>`;
     f.rows.forEach((r,i)=>{
       const res=getResult(r.team_name,r.year);
       const rc=res.includes('Champion')?'#f59e0b':res.includes('Runner')?'#94a3b8':res.includes('3rd')?'#cd7f32':res.includes('Booty')?'#10b981':res.includes('Biggest')?'#ef4444':'#64748b';
-      html+=`<div style="display:grid;grid-template-columns:55px 1fr 1fr 85px 85px 85px 160px;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.02)':''}">
+      html+=`<div style="display:grid;grid-template-columns:55px 185px 170px 80px 80px 80px 145px;align-items:center;padding:10px 16px;${i%2===0?'background:rgba(255,255,255,0.02)':''}">
         <div style="font-size:13px;font-weight:700;color:#64748b">${r.year}</div>
         <div style="font-size:13px;font-weight:600;color:#f1f5f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</div>
         <div style="font-size:12px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.manager||''}</div>
@@ -310,7 +325,7 @@ function renderTeams(){
         <div style="font-size:12px;color:${rc};font-weight:${res?'600':'400'}">${res||'—'}</div>
       </div>`;
     });
-    html+=`</div>`;
+    html+=`</div></div></div>`;
   } else {
     html+=`<div style="display:flex;gap:8px;margin-bottom:20px">
       <button class="sub-tab ${!showAll?'active':''}" onclick="state.teamsShowAll=false;render()">Active Franchises</button>
