@@ -14,13 +14,14 @@ CORE_FILES = ['standings', 'matchups', 'draft_picks', 'champions',
               'team_yearly', 'head_to_head', 'playoff_games']
 
 # Optional 2025 files (only embed if they exist)
-OPTIONAL_FILES = ['weekly_scores_2025', 'player_stats_2025', 'transactions']
+OPTIONAL_FILES = ['weekly_scores_2025', 'player_stats_2025', 'transactions', 'rosters']
 
-DATA_INIT = 'let DATA={standings:[],matchups:[],draft_picks:[],champions:[],team_yearly:[],head_to_head:[],playoff_games:[],weekly_scores_2025:[],player_stats_2025:{},transactions:[]};'
+DATA_INIT = 'let DATA={standings:[],matchups:[],draft_picks:[],champions:[],team_yearly:[],head_to_head:[],playoff_games:[],weekly_scores_2025:[],player_stats_2025:{},transactions:[],rosters:[]};'
 
 # Old DATA init lines to migrate
 OLD_INITS = [
     'let DATA={standings:[],matchups:[],draft_picks:[],champions:[],team_yearly:[],head_to_head:[],playoff_games:[]};',
+    'let DATA={standings:[],matchups:[],draft_picks:[],champions:[],team_yearly:[],head_to_head:[],playoff_games:[],weekly_scores_2025:[],player_stats_2025:{},transactions:[]};',
 ]
 
 BEGIN = '/*BEGIN_INLINE_DATA*/'
