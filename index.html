@@ -2261,7 +2261,7 @@ function renderPlayerProfile(name){
 
   function weeklyGameLog(yr){
     if(state.psExpandYear!==yr) return '';
-    if(pos==='DST') return `<div style="padding:12px 14px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.06);color:#64748b;font-size:12px;font-style:italic">Week-by-week data not available for DST.</div>`;
+    if(pos==='DST'&&yr!==2025) return `<div style="padding:12px 14px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.06);color:#64748b;font-size:12px;font-style:italic">Week-by-week data only available for DST from 2025.</div>`;
     if(!WEEKLY_DETAIL_CACHE||WEEKLY_DETAIL_CACHE===false){
       loadWeeklyDetail();
       return `<div style="padding:12px 14px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.06);color:#94a3b8;font-size:12px;font-style:italic">Loading game log...</div>`;
@@ -2277,6 +2277,7 @@ function renderPlayerProfile(name){
     else if(pos==='RB'){cols='36px 45px 65px 45px 45px 45px 65px 55px 65px';hdrs=['WK','ATT','RUSH YDS','TD','TGT','REC','REC YDS','REC TD','FPTS'];}
     else if(pos==='WR'||pos==='TE'){cols='36px 45px 45px 65px 45px 65px 65px';hdrs=['WK','TGT','REC','REC YDS','TD','RUSH YDS','FPTS'];}
     else if(pos==='K'){cols='36px 45px 45px 55px 45px 65px';hdrs=['WK','FGM','FGA','FG%','XPM','FPTS'];}
+    else if(pos==='DST'){cols='36px 50px 40px 40px 40px 40px 65px 65px';hdrs=['WK','OPP','SCK','INT','FUM','TD','PTS AGNST','FPTS'];}
     else{cols='36px 65px';hdrs=['WK','FPTS'];}
     let s=`<div style="padding:8px 14px 14px;background:rgba(0,0,0,0.28);border-top:1px solid rgba(255,255,255,0.07)">`;
     s+=`<div style="overflow-x:auto"><div style="min-width:360px">`;
@@ -2300,6 +2301,7 @@ function renderPlayerProfile(name){
       else if(pos==='RB'){s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.ra||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#22d3ee;font-weight:600">${sd.ry||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#34d399;font-weight:700">${sd.rtd||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.tar||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.rec||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#60a5fa;font-weight:600">${sd.rey||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#34d399">${sd.retd||0}</div>`;s+=`<div style="text-align:right;font-size:13px;color:${fptsColor};font-weight:700">${fpts!=null?fpts.toFixed(1):'—'}</div>`;}
       else if(pos==='WR'||pos==='TE'){s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.tar||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.rec||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#22d3ee;font-weight:600">${sd.rey||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#34d399;font-weight:700">${sd.retd||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.ry||0}</div>`;s+=`<div style="text-align:right;font-size:13px;color:${fptsColor};font-weight:700">${fpts!=null?fpts.toFixed(1):'—'}</div>`;}
       else if(pos==='K'){const fgpct=sd.fga?Math.round((sd.fgm||0)/sd.fga*100)+'%':'—';s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.fgm||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.fga||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#22d3ee">${fgpct}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.xpm||0}</div>`;s+=`<div style="text-align:right;font-size:13px;color:${fptsColor};font-weight:700">${fpts!=null?fpts.toFixed(1):'—'}</div>`;}
+      else if(pos==='DST'){s+=`<div style="font-size:11px;color:#64748b">${sd.opp||'—'}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.dsck||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#22d3ee">${sd.dint||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#94a3b8">${sd.dfum||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#facc15;font-weight:700">${sd.dtd||0}</div>`;s+=`<div style="text-align:right;font-size:12px;color:#f87171">${sd.dpa!=null?sd.dpa:'—'}</div>`;s+=`<div style="text-align:right;font-size:13px;color:${fptsColor};font-weight:700">${fpts!=null?fpts.toFixed(1):'—'}</div>`;}
       else{s+=`<div style="text-align:right;font-size:13px;color:${fptsColor};font-weight:700">${fpts!=null?fpts.toFixed(1):'—'}</div>`;}
       s+=`</div>`;
     }
