@@ -13,9 +13,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://calves86.github.io/phfl-dashboard/team-logo/playahatas-logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="leftnav.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0b1120;color:#e2e8f0;font-family:'DM Sans','Segoe UI',sans-serif;min-height:100vh}
+#main{flex:1;min-width:0;overflow-y:auto}
 a{color:#22d3ee;text-decoration:none}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
 
@@ -157,6 +159,13 @@ select.dropdown option{background:#1e293b;color:#e2e8f0}
 </style>
 </head>
 <body>
+<div id="app">
+<nav id="leftnav"></nav>
+<div id="main">
+<div id="ln-topbar">
+  <button id="ln-mobile-btn" onclick="lnToggleMobile()">&#9776;</button>
+  <span class="ln-topbar-title">Portuguese Heritage Fantasy League</span>
+</div>
 <div class="header">
   <div class="header-inner">
     <div class="logo"><div style="height:80px;overflow:hidden;border-radius:8px;line-height:0"><img src="team-logo/playahatas-logo.jpg" alt="PHFL" style="height:130px;width:auto;display:block"></div></div>
@@ -2811,5 +2820,9 @@ function renderConstitution(){
 // ══════════════════════════════════════════════════
 loadData();
 </script>
+<script src="leftnav.js"></script>
+<script>initLeftNav('index.html', {leagueName:'PHFL Fantasy',leagueSub:'Portuguese Heritage FL',logo:'phfl-logo.png',footerText:'PHFL &middot; 2025'});</script>
+</div><!-- /#main -->
+</div><!-- /#app -->
 </body>
 </html>
