@@ -10,6 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{display:flex;background:#0b1120;color:#e2e8f0;font-family:'DM Sans','Segoe UI',sans-serif;min-height:100vh}
+#shell{display:flex;flex:1;min-height:100vh}
 #main{flex:1;min-width:0;overflow-y:auto}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0f172a}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
 a{color:#22d3ee;text-decoration:none}
@@ -213,7 +214,7 @@ select.sel option{background:#1e293b}
 </style>
 </head>
 <body>
-<div id="app">
+<div id="shell">
 <nav id="leftnav"></nav>
 <div id="main">
 <div id="ln-topbar">
@@ -241,7 +242,7 @@ select.sel option{background:#1e293b}
     <a href="index.html" class="back-btn">← Dashboard</a>
   </div>
 </div>
-<div class="page"><div class="loading"><span class="spinner"></span> Loading player data...</div></div>
+<div class="page" id="app"><div class="loading"><span class="spinner"></span> Loading player data...</div></div>
 
 <script>
 /* ===== LEAGUE CONFIG ===== */
@@ -943,6 +944,6 @@ loadData();
 <script src="leftnav.js"></script>
 <script>initLeftNav('mock-draft.html', {leagueName:'PHFL Fantasy',leagueSub:'Portuguese Heritage FL',logo:'phfl-logo.png',footerText:'PHFL &middot; 2025'});</script>
 </div><!-- /#main -->
-</div><!-- /#app -->
+</div><!-- /#shell -->
 </body>
 </html>
