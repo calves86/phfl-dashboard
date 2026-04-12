@@ -578,6 +578,11 @@ function renderWeekTopPerformers(week){
 }
 
 function initApp(){
+  const p = new URLSearchParams(location.search);
+  const tabParam  = p.get('tab');
+  const yearParam = p.get('year');
+  if (tabParam)  state.tab = decodeURIComponent(tabParam).replace(/\+/g,' ');
+  if (yearParam) { state.selSeason = parseInt(yearParam); state.tab = 'Seasons'; }
   renderTabs();
   render();
 }
