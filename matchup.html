@@ -319,6 +319,8 @@ async function loadAll(){
     const wksWithLineups = allWks.filter(w=>wsWeeks.has(w));
     const wks = allWks;
     selWeek = (wksWithLineups[wksWithLineups.length-1]) || wks[wks.length-1] || 1;
+    const _qw=parseInt(new URLSearchParams(location.search).get('week'));
+    if(_qw && wks.includes(_qw)) selWeek=_qw;
     selIdx  = 0;
 
     document.getElementById('mu-loading').style.display='none';
