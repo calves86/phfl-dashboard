@@ -81,6 +81,9 @@ a{color:#22d3ee;text-decoration:none}
 .mu-type{font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
 .mu-type.playoff-label{color:#facc15}
 
+.stand-tabs{display:flex;gap:0;padding:0 14px;background:rgba(0,0,0,0.2);border-bottom:1px solid rgba(255,255,255,0.06)}
+.stand-tab{padding:8px 14px;border:none;background:transparent;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid transparent;transition:all .15s}
+.stand-tab.on{color:#22d3ee;border-bottom-color:#22d3ee}
 .stand-body{max-height:520px;overflow-y:auto}
 .stand-hdr{display:grid;grid-template-columns:22px 1fr 58px 50px;gap:6px;padding:7px 14px;background:rgba(0,0,0,0.25);font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.8px}
 .stand-row{display:grid;grid-template-columns:22px 1fr 58px 50px;gap:6px;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .1s}
@@ -280,19 +283,24 @@ function tLogoImg(name,cls='mu-tlogo'){
 let D={};
 let selWeek=null;
 let PHOTO_MAP={};
+let DIVS={};
+let stTab='regular';
 
 async function loadAll(){
   try{
-    const [standings,matchups,transactions,newsRaw,weeklyScores,playoffGamesRaw]=await Promise.all([
+    const [standings,matchups,transactions,divisionsRaw,newsRaw,weeklyScores,playoffGamesRaw]=await Promise.all([
       fetch('data/standings.json').then(r=>r.json()),
       fetch('data/matchups.json').then(r=>r.json()),
       fetch('data/transactions.json').then(r=>r.json()),
+      fetch('data/divisions.json').then(r=>r.json()).catch(()=>[]),
       fetch('data/player_news_2025.json').then(r=>r.json()).catch(()=>({})),
       fetch('data/weekly_scores_2025.json').then(r=>r.json()).catch(()=>[]),
       fetch('data/playoff_games.json').then(r=>r.json()).catch(()=>[])
     ]);
     D.standings=standings.filter(s=>s.season===SEASON).sort((a,b)=>a.rank-b.rank);
     D.matchups=matchups.filter(m=>m.season===SEASON);
+    D.divs=(divisionsRaw||[]).filter(d=>d.season===SEASON);
+    D.divs.forEach(d=>{DIVS[d.team_name]=d.division;});
     D.tx=transactions.filter(t=>t.season===SEASON);
     D.news=newsRaw.teams||newsRaw||{};
     D.weekly=weeklyScores;
@@ -495,24 +503,134 @@ function buildLineupCol(entry,teamName,isRight){
 
 /* ── Standings ── */
 function renderStandings(){
+  const CONF_ORDER=['WEST SIDE','EAST SIDE'];
+  const confNames=CONF_ORDER.filter(c=>[...new Set(D.divs.map(x=>x.division))].includes(c));
+  const hasConfs=confNames.length>0;
+  const tabs=`<div class="stand-tabs">
+    <button class="stand-tab ${stTab==='regular'?'on':''}" onclick="stTab='regular';reStand()">Regular Season</button>
+    ${hasConfs?confNames.map(c=>`<button class="stand-tab ${stTab===c?'on':''}" onclick="stTab='${c}';reStand()">${c}</button>`).join(''):''}
+    <button class="stand-tab ${stTab==='final'?'on':''}" onclick="stTab='final';reStand()">Final</button>
+  </div>`;
   return`<div class="panel">
     <div class="panel-hdr"><span class="ph-title">Standings</span><span class="ph-badge">2025</span></div>
+    ${tabs}
     <div class="stand-hdr"><div></div><div>Team</div><div style="text-align:center">W–L</div><div style="text-align:right">PF</div></div>
-    <div class="stand-body">${buildStandRows()}</div>
+    <div class="stand-body" id="stand-body">${buildStandRows()}</div>
   </div>`;
 }
+function getRegSeasonStandings(){
+  const reg=D.matchups.filter(m=>m.matchup_type!=='playoff');
+  const stats={};
+  reg.forEach(m=>{
+    [m.team1_name,m.team2_name].forEach(t=>{if(!stats[t])stats[t]={wins:0,losses:0,pf:0};});
+    stats[m.team1_name].pf+=m.team1_score||0;
+    stats[m.team2_name].pf+=m.team2_score||0;
+    if(m.team1_score>m.team2_score){stats[m.team1_name].wins++;stats[m.team2_name].losses++;}
+    else if(m.team2_score>m.team1_score){stats[m.team2_name].wins++;stats[m.team1_name].losses++;}
+    else{stats[m.team1_name].wins+=0.5;stats[m.team2_name].wins+=0.5;}
+  });
+  return Object.entries(stats)
+    .map(([t,s])=>({team_name:t,wins:s.wins,losses:s.losses,points_for:Math.round(s.pf*10)/10}))
+    .sort((a,b)=>(b.wins-a.wins)||(b.points_for-a.points_for))
+    .map((s,i)=>({...s,rank:i+1}));
+}
+function getFinalStandings(){
+  const pg=D.playoffGames.filter(g=>g.season===SEASON);
+  const wG=pg.filter(g=>g.bracket==='playoff');
+  const cG=pg.filter(g=>g.bracket==='consolation');
+  if(!wG.length) return [];
+  const maxWR=Math.max(...wG.map(g=>g.round));
+  const picks={};
+  wG.filter(g=>g.round===maxWR).forEach(g=>{
+    const loser=g.winner===g.team1?g.team2:g.team1;
+    const n=g.round_name.toLowerCase();
+    if(n.includes('champ')){picks[g.winner]=12;picks[loser]=11;}
+    else{picks[g.winner]=10;picks[loser]=9;}
+  });
+  const maxCR=cG.length?Math.max(...cG.map(g=>g.round)):0;
+  cG.filter(g=>g.round===maxCR).forEach(g=>{
+    const loser=g.winner===g.team1?g.team2:g.team1;
+    const n=g.round_name.toLowerCase();
+    if(n.includes('booty')){picks[g.winner]=1;picks[loser]=2;}
+    else{picks[g.winner]=3;picks[loser]=4;}
+  });
+  const r1L=new Set(wG.filter(g=>g.round===1).map(g=>g.winner===g.team1?g.team2:g.team1));
+  const allWks=[...new Set(D.matchups.filter(m=>m.matchup_type==='playoff').map(m=>m.week))].sort((a,b)=>a-b);
+  const lbRounds=[];let lbR1W=new Set();
+  for(const wk of allWks){
+    if(lbRounds.length>=maxWR-1) break;
+    const gms=D.matchups.filter(m=>m.week===wk&&r1L.has(m.team1_name)&&r1L.has(m.team2_name));
+    if(!gms.length) continue;
+    const mapped=gms.map(g=>({team1:g.team1_name,s1:g.team1_score,team2:g.team2_name,s2:g.team2_score,winner:g.team1_score>g.team2_score?g.team1_name:g.team2_name}));
+    if(!lbRounds.length) mapped.forEach(g=>lbR1W.add(g.winner));
+    lbRounds.push(mapped);
+  }
+  if(lbRounds.length){
+    lbRounds[lbRounds.length-1].forEach(g=>{
+      const f=lbR1W.has(g.team1)&&lbR1W.has(g.team2);
+      const loser=g.winner===g.team1?g.team2:g.team1;
+      picks[g.winner]=f?5:7;picks[loser]=f?6:8;
+    });
+  }
+  return Object.entries(picks).sort((a,b)=>b[1]-a[1]).map(([team,pick],i)=>({team,pick,rank:i+1}));
+}
 function buildStandRows(){
+  const regRows=getRegSeasonStandings();
+  const confGroups={};
+  regRows.forEach(r=>{const c=DIVS[r.team_name];if(c){if(!confGroups[c])confGroups[c]=[];confGroups[c].push(r);}});
+  const confLeaderSet=new Set(Object.values(confGroups).map(g=>g[0]?.team_name).filter(Boolean));
+  const leagueMaxW=Math.max(...regRows.map(r=>r.wins||0));
+  const leagueMaxPF=Math.max(...regRows.map(r=>r.points_for||0));
+
+  function badges(team, rows, isConfView){
+    const tw=rows.find(r=>r.team_name===team); if(!tw) return '';
+    const isConfLeader=isConfView?rows[0]?.team_name===team:confLeaderSet.has(team);
+    let b='';
+    if(isConfLeader) b+=`<span style="font-size:9px;font-weight:700;color:#60a5fa;border:1px solid rgba(96,165,250,0.3);border-radius:3px;padding:1px 4px;margin-left:4px">DIV</span>`;
+    if(tw.wins===leagueMaxW) b+=`<span style="font-size:9px;font-weight:700;color:#facc15;border:1px solid rgba(250,204,21,0.3);border-radius:3px;padding:1px 4px;margin-left:4px">WINS</span>`;
+    if(tw.points_for===leagueMaxPF) b+=`<span style="font-size:9px;font-weight:700;color:#f97316;border:1px solid rgba(249,115,22,0.3);border-radius:3px;padding:1px 4px;margin-left:4px">PF</span>`;
+    return b;
+  }
+
+  if(stTab==='final'){
+    const rows=getFinalStandings();
+    if(!rows.length) return '<div style="padding:20px;text-align:center;color:#475569">No playoff data</div>';
+    let out='';
+    rows.forEach(({team,rank})=>{
+      const s=regRows.find(x=>x.team_name===team)||{};
+      out+=`<div class="stand-row">
+        <div class="sr-rank">${rank}</div>
+        <div class="sr-team">${tLogoImg(team,'sr-tlogo')}<span class="sr-tname">${team}</span></div>
+        <div class="sr-record">${s.wins??'—'}–${s.losses??'—'}</div>
+        <div class="sr-pts">${s.points_for!=null?s.points_for.toFixed(1):'—'}</div>
+      </div>`;
+    });
+    return out;
+  }
+  const rows=stTab==='regular'?regRows:regRows.filter(s=>DIVS[s.team_name]===stTab).map((s,i)=>({...s,rank:i+1}));
+  const isConfView=stTab!=='regular';
   let out='';
-  D.standings.forEach(s=>{
-    const isPO=s.rank<=PLAYOFF_SPOTS;
+  rows.forEach((s,i)=>{
+    const rank=isConfView?i+1:s.rank;
     out+=`<div class="stand-row">
-      <div class="sr-rank">${s.rank}</div>
-      <div class="sr-team">${tLogoImg(s.team_name,'sr-tlogo')}<span class="sr-tname">${s.team_name}</span>${isPO?'<span class="po-badge">PO</span>':''}</div>
+      <div class="sr-rank">${rank}</div>
+      <div class="sr-team">${tLogoImg(s.team_name,'sr-tlogo')}<span class="sr-tname">${s.team_name}</span>${badges(s.team_name,rows,isConfView)}</div>
       <div class="sr-record">${s.wins}–${s.losses}</div>
       <div class="sr-pts">${(s.points_for||0).toFixed(1)}</div>
     </div>`;
   });
   return out||'<div style="padding:20px;text-align:center;color:#475569">No data</div>';
+}
+function reStand(){
+  document.querySelectorAll('.stand-tab').forEach(t=>{
+    const lbl=t.textContent.trim();
+    t.classList.toggle('on',
+      (stTab==='regular'&&lbl==='Regular Season')||
+      (stTab==='final'&&lbl==='Final')||
+      (stTab!=='regular'&&stTab!=='final'&&lbl===stTab)
+    );
+  });
+  document.getElementById('stand-body').innerHTML=buildStandRows();
 }
 
 /* ── Activity Feed ── */
