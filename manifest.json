@@ -1,0 +1,21 @@
+{
+  "name": "PHFL Fantasy Football",
+  "short_name": "PHFL Fantasy",
+  "description": "Playa Hatas Fantasy Football League",
+  "start_url": "./dashboard.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#22d3ee",
+  "orientation": "portrait",
+  "categories": ["sports"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "team-logo/playahatas-logo.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
