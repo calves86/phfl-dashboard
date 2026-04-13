@@ -9,7 +9,7 @@ body{display:flex;min-height:100vh;overflow-x:hidden}
 
 /* Brand */
 .ln-brand{padding:18px 14px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;min-width:0}
-.ln-logo{width:34px;height:34px;object-fit:contain;flex-shrink:0}
+.ln-logo{width:34px;height:34px;object-fit:cover;border-radius:6px;flex-shrink:0}
 .ln-brand-text{min-width:0;overflow:hidden}
 .ln-league-name{font-size:13px;font-weight:800;color:#e2e8f0;letter-spacing:.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ln-league-sub{font-size:10px;color:#475569;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-top:1px;white-space:nowrap}
