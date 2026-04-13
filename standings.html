@@ -75,7 +75,7 @@ a{color:#22d3ee;text-decoration:none}
 </style>
 </head>
 <body>
-<div id="shell">
+<div id="app">
 <nav id="leftnav"></nav>
 <div id="main">
 <div id="ln-topbar">
@@ -91,7 +91,7 @@ a{color:#22d3ee;text-decoration:none}
   </div>
 </div>
 <div class="page-body">
-  <div id="app"><div class="loading">Loading standings…</div></div>
+  <div id="stnds"><div class="loading">Loading standings…</div></div>
 </div>
 </div>
 </div>
@@ -227,7 +227,7 @@ function getFinalStandings(){
 function render(){
   const{rec,streak,sorted}=getRegStats();
   if(!sorted.length){
-    document.getElementById('app').innerHTML='<div class="loading">No standings data available.</div>';
+    document.getElementById('stnds').innerHTML='<div class="loading">No standings data available.</div>';
     return;
   }
 
@@ -298,7 +298,7 @@ function render(){
   const tabDefs=[{k:'regular',l:'Regular Season'},...confNames.map(d=>({k:d,l:d})),{k:'final',l:'Final'}];
   let tabs=`<div class="stand-tabs">`;
   tabDefs.forEach(({k,l})=>{
-    tabs+=`<button class="stand-tab${stTab===k?' on':''}" onclick="setTab('${k.replace(/'/g,\"\\\\'\")}');">${l}</button>`;
+    tabs+=`<button class="stand-tab${stTab===k?' on':''}" onclick="setTab('${k}')">${l}</button>`;
   });
   tabs+=`</div>`;
 
@@ -351,7 +351,7 @@ function render(){
     body+=`</div></div>`;
   }
 
-  document.getElementById('app').innerHTML=tabs+body;
+  document.getElementById('stnds').innerHTML=tabs+body;
 }
 
 function setTab(t){stTab=t;render();}
