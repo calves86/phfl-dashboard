@@ -1082,92 +1082,123 @@ function renderSeasons(){
   }
 
   if(state.subTab==='standings'){
-    const stYrRaw=DATA.standings.filter(r=>r.season===yr);
-    const stSeeds=getPlayoffSeeds(yr);
     const isConf=yr>=2018;
-    const divConfLabel=isConf?'Conference':'Division';
-    const byDivBtnLabel=isConf?'Conferences':'Divisions';
-    const divColLabel=isConf?'Conf':'Div';
-    const badgeText=isConf?'CONF':'DIV';
-    const stDivLeaders=new Set(stSeeds.filter(s=>s.isDivLeader).map(s=>s.team));
-    const stBestRec=stSeeds.length?stSeeds.slice().sort((a,b)=>(b.wins-a.wins)||b.pf-a.pf)[0].team:'';
-    const stBestPF=stSeeds.length?stSeeds.slice().sort((a,b)=>b.pf-a.pf)[0].team:'';
-    function stBadges(name){
-      return(stDivLeaders.has(name)?`<span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;background:rgba(96,165,250,0.15);color:#60a5fa;border:1px solid rgba(96,165,250,0.3)">${badgeText}</span> `:'')
-            +(name===stBestRec?`<span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;background:rgba(250,204,21,0.15);color:#facc15;border:1px solid rgba(250,204,21,0.3)">WINS</span> `:'')
-            +(name===stBestPF?`<span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;background:rgba(249,115,22,0.15);color:#f97316;border:1px solid rgba(249,115,22,0.3)">PF</span>`:'');
+    const divLabel=isConf?'CONF':'DIV';
+    const badgeLabel=isConf?'CONF':'DIV';
+    const accentColor='#22d3ee';
+    // Use getPlayoffSeeds for wins/losses/ties/pf/pa/cw/cl/ct
+    const stSeeds=getPlayoffSeeds(yr);
+    const groupLabels=stSeeds._groupLabels||{};
+    const rec={};
+    stSeeds.forEach(s=>{
+      rec[s.team]={w:s.wins,l:s.losses,t:s.ties||0,pf:s.pf,pa:s.pa||0,cw:s.cw||0,cl:s.cl||0,ct:s.ct||0,divId:s.divId??0,isDivLeader:s.isDivLeader};
+    });
+    // Compute streak from regular-season matchups
+    const rsm=DATA.matchups.filter(m=>m.season===yr&&m.matchup_type==='regular');
+    const streak={};
+    Object.keys(rec).forEach(t=>{
+      const tg=rsm.filter(m=>m.team1_name===t||m.team2_name===t).sort((a,b)=>a.week-b.week);
+      if(!tg.length){streak[t]='—';return;}
+      let last=null,cnt=0;
+      tg.forEach(m=>{const s1=m.team1_score||0,s2=m.team2_score||0;const r=(m.team1_name===t?s1>s2:s2>s1)?'W':(m.team1_name===t?s1<s2:s2<s1)?'L':'T';if(r===last)cnt++;else cnt=1;last=r;});
+      streak[t]=(last||'—')+(cnt>1?cnt:'');
+    });
+    const stTeams=stSeeds.map(s=>s.team);
+    const lgLdr=stTeams[0]||null;
+    const lgLdrW=lgLdr?rec[lgLdr].w:0,lgLdrL=lgLdr?rec[lgLdr].l:0,lgLdrPF=lgLdr?rec[lgLdr].pf:0;
+    const leagueMaxW=lgLdrW,leagueMaxPF=lgLdrPF;
+    const divGroupsById={};
+    stTeams.forEach(t=>{const d=rec[t].divId;(divGroupsById[d]=divGroupsById[d]||[]).push(t);});
+    const divIds=Object.keys(divGroupsById).map(Number).sort();
+    const divLeaderSet=new Set(Object.values(divGroupsById).map(g=>g[0]).filter(Boolean));
+    const groupTabDefs=divIds.map(d=>({k:'div'+d,l:groupLabels[d]||(isConf?'Conference '+(d+1):'Division '+(d+1)),divId:d}));
+    function getFinalSeason(){
+      const pg=DATA.playoff_games.filter(g=>g.season===yr);
+      const wG=pg.filter(g=>g.bracket==='playoff'),cG=pg.filter(g=>g.bracket==='consolation');
+      if(!wG.length)return[];
+      const maxWR=Math.max(...wG.map(g=>g.round)),picks={};
+      wG.filter(g=>g.round===maxWR).forEach(g=>{const loser=g.winner===g.team1?g.team2:g.team1;const n=(g.round_name||'').toLowerCase();if(n.includes('champ')){picks[g.winner]=12;picks[loser]=11;}else{picks[g.winner]=10;picks[loser]=9;}});
+      const maxCR=cG.length?Math.max(...cG.map(g=>g.round)):0;
+      if(maxCR)cG.filter(g=>g.round===maxCR).forEach(g=>{const loser=g.winner===g.team1?g.team2:g.team1;const n=(g.round_name||'').toLowerCase();if(n.includes('booty')){picks[g.winner]=1;picks[loser]=2;}else{picks[g.winner]=3;picks[loser]=4;}});
+      const r1L=new Set(wG.filter(g=>g.round===1).map(g=>g.winner===g.team1?g.team2:g.team1));
+      const allWks=[...new Set(DATA.matchups.filter(m=>m.season===yr&&m.matchup_type==='playoff').map(m=>m.week))].sort((a,b)=>a-b);
+      const lbRds=[];let lbR1W=new Set();
+      for(const wk of allWks){if(lbRds.length>=maxWR-1)break;const gms=DATA.matchups.filter(m=>m.season===yr&&m.week===wk&&m.matchup_type==='playoff'&&r1L.has(m.team1_name)&&r1L.has(m.team2_name));if(!gms.length)continue;const mp=gms.map(g=>({t1:g.team1_name,t2:g.team2_name,w:g.team1_score>g.team2_score?g.team1_name:g.team2_name}));if(!lbRds.length)mp.forEach(g=>lbR1W.add(g.w));lbRds.push(mp);}
+      if(lbRds.length){lbRds[lbRds.length-1].forEach(g=>{const f=lbR1W.has(g.t1)&&lbR1W.has(g.t2);const loser=g.w===g.t1?g.t2:g.t1;picks[g.w]=f?5:7;picks[loser]=f?6:8;});}
+      return Object.entries(picks).sort((a,b)=>b[1]-a[1]).map(([team,pick])=>({team,pick}));
     }
-    let stYr;
-    if(state.sortCol==='seed'){
-      const seedIdx={};stSeeds.forEach((s,i)=>seedIdx[s.team]=i);
-      const dir=state.sortDir==='asc'?1:-1;
-      stYr=[...stYrRaw].sort((a,b)=>((seedIdx[a.team_name]??99)-(seedIdx[b.team_name]??99))*dir);
-    }else{stYr=sortStandings(stYrRaw);}
-    if(stYr.length){
-      // Toggle buttons
-      html+=`<div style="display:flex;gap:8px;margin-bottom:16px">`;
-      html+=`<button onclick="state.standingsView='overall';render()" style="padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;border:1px solid ${state.standingsView==='overall'?'rgba(34,211,238,0.5)':'rgba(255,255,255,0.1)'};background:${state.standingsView==='overall'?'rgba(34,211,238,0.1)':'rgba(255,255,255,0.03)'};color:${state.standingsView==='overall'?'#22d3ee':'#94a3b8'};cursor:pointer">Overall</button>`;
-      html+=`<button onclick="state.standingsView='byDiv';render()" style="padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;border:1px solid ${state.standingsView==='byDiv'?'rgba(96,165,250,0.5)':'rgba(255,255,255,0.1)'};background:${state.standingsView==='byDiv'?'rgba(96,165,250,0.1)':'rgba(255,255,255,0.03)'};color:${state.standingsView==='byDiv'?'#60a5fa':'#94a3b8'};cursor:pointer">${byDivBtnLabel}</button>`;
-      html+=`</div>`;
-
-      if(state.standingsView==='byDiv'){
-        // Group seeds by divId
-        const divGroups={};
-        stSeeds.forEach(s=>{const d=s.divId??0;(divGroups[d]=divGroups[d]||[]).push(s);});
-        const divIds=Object.keys(divGroups).sort((a,b)=>a-b);
-        const groupLabels=stSeeds._groupLabels||{};
-        divIds.forEach((d,gi)=>{
-          const grpSeeds=divGroups[d];
-          const grpLabel=groupLabels[d]||`${divConfLabel} ${gi+1}`;
-          html+=`<div style="font-size:10px;font-weight:800;color:#60a5fa;text-transform:uppercase;letter-spacing:1.5px;padding:10px 12px 6px;${gi>0?'margin-top:20px':''}border-bottom:1px solid rgba(96,165,250,0.2);margin-bottom:2px">${grpLabel}</div>`;
-          html+=`<div class="scroll-wrap" style="margin-bottom:8px"><div class="scroll-inner" style="min-width:560px"><div class="data-table">`;
-          html+=`<div class="standings-grid-rwd header-row"><div>#</div><div>Team</div><div style="text-align:center">Record</div><div style="text-align:center">Win%</div><div style="text-align:center">${divColLabel}</div><div style="text-align:right">PF</div><div style="text-align:right">PA</div><div style="padding-left:20px">Badges</div></div>`;
-          // Sort group by seed order (already in seed order from getPlayoffSeeds)
-          grpSeeds.forEach((s,i)=>{
-            const seedNum=stSeeds.indexOf(s)+1;
-            const seedColor=seedNum<=8?'#10b981':'#94a3b8';
-            const r=stYrRaw.find(x=>x.team_name===s.team)||{wins:s.wins,losses:s.losses,ties:s.ties||0,points_for:s.pf,points_against:s.pa};
-            const gm=r.wins+r.losses+(r.ties||0);const p=gm>0?(r.wins/gm).toFixed(3):'—';
-            const divRec=s.cw+'-'+s.cl+(s.ct>0?'-'+s.ct:'');
-            html+=`<div class="standings-grid-rwd" style="${i%2===0?'background:rgba(255,255,255,0.02)':''}">`;
-            html+=`<div style="font-size:12px;font-weight:800;color:${seedColor};text-align:center">${seedNum}</div>`;
-            html+=`<div style="display:flex;align-items:center;gap:5px;overflow:hidden">${tl(s.team,18)}<span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.team}</span></div>`;
-            html+=`<div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${(r.ties||0)>0?'-'+r.ties:''}</div>`;
-            html+=`<div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div>`;
-            html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${divRec}</div>`;
-            html+=`<div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${(r.points_for||s.pf)>0?(r.points_for||s.pf).toFixed(1):'—'}</div>`;
-            html+=`<div style="font-size:13px;color:#94a3b8;text-align:right">${(r.points_against||s.pa)>0?(r.points_against||s.pa).toFixed(1):'—'}</div>`;
-            html+=`<div style="display:flex;gap:3px;align-items:center;padding-left:20px">${stBadges(s.team)}</div>`;
-            html+=`</div>`;
-          });
-          html+=`</div></div></div>`;
-        });
-      } else {
-        html+=`<div class="scroll-wrap"><div class="scroll-inner"><div class="data-table">`;
-        const seedLookup={};stSeeds.forEach(s=>{seedLookup[s.team]=s;});
-        html+=`<div class="standings-grid-rwd header-row"><div style="cursor:pointer" onclick="toggleSort('seed')">#${sortArrow('seed')}</div><div>Team</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('record')">Record${sortArrow('record')}</div><div style="text-align:center;cursor:pointer" onclick="toggleSort('winpct')">Win%${sortArrow('winpct')}</div><div style="text-align:center">${divColLabel}</div><div style="text-align:right;cursor:pointer" onclick="toggleSort('pf')">PF${sortArrow('pf')}</div><div style="text-align:right;cursor:pointer" onclick="toggleSort('pa')">PA${sortArrow('pa')}</div><div style="padding-left:20px">Rewards</div></div>`;
-        stYr.forEach((r,i)=>{
-          const gm=r.wins+r.losses+(r.ties||0);const p=gm>0?(r.wins/gm).toFixed(3):'—';
-          const seed=stSeeds.findIndex(s=>s.team===r.team_name);
-          const seedNum=seed>=0?seed+1:null;
-          const seedColor=seedNum&&seedNum<=8?'#10b981':'#94a3b8';
-          const sd=seedLookup[r.team_name];
-          const divRec=sd?(sd.cw+'-'+sd.cl+(sd.ct>0?'-'+sd.ct:'')):'—';
-          html+=`<div class="standings-grid-rwd" style="${i%2===0?'background:rgba(255,255,255,0.02)':''}">`;
-          html+=`<div style="font-size:12px;font-weight:800;color:${seedColor};text-align:center">${seedNum||i+1}</div>`;
-          html+=`<div style="display:flex;align-items:center;gap:5px;overflow:hidden">${tl(r.team_name,18)}<span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.team_name}</span></div>`;
-          html+=`<div style="font-size:13px;color:#94a3b8;text-align:center">${r.wins}-${r.losses}${r.ties>0?'-'+r.ties:''}</div>`;
-          html+=`<div style="font-size:13px;color:#94a3b8;text-align:center">${p}</div>`;
-          html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${divRec}</div>`;
-          html+=`<div style="font-size:13px;color:#22d3ee;text-align:right;font-weight:600">${r.points_for>0?r.points_for.toFixed(1):'—'}</div>`;
-          html+=`<div style="font-size:13px;color:#94a3b8;text-align:right">${r.points_against>0?r.points_against.toFixed(1):'—'}</div>`;
-          html+=`<div style="display:flex;gap:3px;align-items:center;padding-left:20px">${stBadges(r.team_name)}</div>`;
+    function mkBadges(t,isDivLdr){
+      let b='';
+      if(isDivLdr)b+=`<span style="font-size:9px;font-weight:700;color:#60a5fa;border:1px solid rgba(96,165,250,0.3);border-radius:3px;padding:1px 4px">${badgeLabel}</span> `;
+      if(rec[t]?.w===leagueMaxW)b+=`<span style="font-size:9px;font-weight:700;color:#facc15;border:1px solid rgba(250,204,21,0.3);border-radius:3px;padding:1px 4px">WINS</span> `;
+      if(rec[t]?.pf===leagueMaxPF)b+=`<span style="font-size:9px;font-weight:700;color:#f97316;border:1px solid rgba(249,115,22,0.3);border-radius:3px;padding:1px 4px">PF</span>`;
+      return b;
+    }
+    const validSVs=['regular',...groupTabDefs.map(g=>g.k),'final'];
+    const sv=validSVs.includes(state.standingsView)?state.standingsView:'regular';
+    html+=`<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">`;
+    [{k:'regular',l:'Regular Season'},...groupTabDefs,{k:'final',l:'Final'}].forEach(({k,l})=>{
+      html+=`<button class="sub-tab ${sv===k?'active':''}" onclick="state.standingsView='${k}';render()">${l}</button>`;
+    });
+    html+=`</div>`;
+    const GCOLS='display:grid;grid-template-columns:28px 1fr 32px 32px 32px 52px 42px 52px 55px 72px 54px 65px 80px;align-items:center;padding:8px 12px';
+    const HDR=`<div style="${GCOLS}" class="header-row"><div>#</div><div>Team</div><div style="text-align:center">W</div><div style="text-align:center">L</div><div style="text-align:center">T</div><div style="text-align:center">Win%</div><div style="text-align:center">GB</div><div style="text-align:center">Streak</div><div style="text-align:center">${divLabel}</div><div style="text-align:right">PF</div><div style="text-align:right">Back</div><div style="text-align:right">PA</div><div style="padding-left:4px">Badges</div></div>`;
+    if(!stTeams.length){html+=`<div style="padding:40px;text-align:center;color:#94a3b8">No data for ${yr}</div>`;}
+    else if(sv==='final'){
+      const fRows=getFinalSeason();
+      if(!fRows.length){html+=`<div style="padding:40px;text-align:center;color:#94a3b8">No playoff data for ${yr}</div>`;}
+      else{
+        html+=`<div class="scroll-wrap"><div class="scroll-inner" style="min-width:720px"><div class="data-table">${HDR}`;
+        fRows.forEach(({team,pick},i)=>{
+          const r=rec[team]||{w:0,l:0,t:0,pf:0,pa:0,cw:0,cl:0,ct:0};
+          const gm=r.w+r.l+r.t;const pct=gm>0?(r.w/gm).toFixed(3):'—';
+          const dRec=`${r.cw}-${r.cl}${r.ct>0?'-'+r.ct:''}`;
+          const sc=streak[team]||'—';const sfg=sc.startsWith('W')?'#10b981':sc.startsWith('L')?'#f87171':'#94a3b8';
+          html+=`<div style="${GCOLS};${i%2===0?'background:rgba(255,255,255,0.02)':''}">` ;
+          html+=`<div style="font-size:13px;font-weight:700;color:#94a3b8;text-align:center">${i+1}</div>`;
+          html+=`<div style="display:flex;align-items:center;gap:5px;overflow:hidden">${tl(team,18)}<span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${team}</span></div>`;
+          html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${r.w}</div><div style="font-size:12px;color:#94a3b8;text-align:center">${r.l}</div><div style="font-size:12px;color:#94a3b8;text-align:center">${r.t}</div>`;
+          html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${pct}</div><div style="font-size:12px;color:#94a3b8;text-align:center">—</div>`;
+          html+=`<div style="font-size:12px;text-align:center;color:${sfg}">${sc}</div>`;
+          html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${dRec}</div>`;
+          html+=`<div style="font-size:12px;color:${accentColor};text-align:right;font-weight:600">${r.pf>0?r.pf.toFixed(1):'—'}</div>`;
+          html+=`<div style="font-size:12px;color:#94a3b8;text-align:right">—</div>`;
+          html+=`<div style="font-size:12px;color:#94a3b8;text-align:right">${r.pa>0?r.pa.toFixed(1):'—'}</div>`;
+          html+=`<div style="font-size:11px;color:#facc15;padding-left:4px">${pick===12?'🏆':pick===1?'💩':''}</div>`;
           html+=`</div>`;
         });
         html+=`</div></div></div>`;
       }
     } else {
-      html+=`<div style="padding:40px;text-align:center;color:#94a3b8">No standings data for ${yr}</div>`;
+      const selDivDef=groupTabDefs.find(g=>g.k===sv);
+      const isDivView=!!selDivDef;
+      const viewTeams=isDivView?(divGroupsById[selDivDef.divId]||[]):stTeams;
+      const dlt=isDivView?viewTeams[0]:lgLdr;
+      const dldrW=dlt?rec[dlt].w:(isDivView?0:lgLdrW),dldrL=dlt?rec[dlt].l:(isDivView?0:lgLdrL),dldrPF=dlt?rec[dlt].pf:(isDivView?0:lgLdrPF);
+      function gbStr(t){const gb=((dldrW-rec[t].w)+(rec[t].l-dldrL))/2;return gb<=0?'—':gb%1===0?String(gb):gb.toFixed(1);}
+      function backStr(t){const bk=dldrPF-rec[t].pf;return bk<=0?'—':bk.toFixed(1);}
+      html+=`<div class="scroll-wrap"><div class="scroll-inner" style="min-width:720px"><div class="data-table">${HDR}`;
+      viewTeams.forEach((t,i)=>{
+        const r=rec[t];if(!r)return;
+        const gm=r.w+r.l+r.t;const pct=gm>0?(r.w/gm).toFixed(3):'—';
+        const dRec=`${r.cw}-${r.cl}${r.ct>0?'-'+r.ct:''}`;
+        const sc=streak[t]||'—';const sfg=sc.startsWith('W')?'#10b981':sc.startsWith('L')?'#f87171':'#94a3b8';
+        const isDivLdr=isDivView?i===0:divLeaderSet.has(t);
+        html+=`<div style="${GCOLS};${i%2===0?'background:rgba(255,255,255,0.02)':''}">` ;
+        html+=`<div style="font-size:13px;font-weight:700;color:#94a3b8;text-align:center">${i+1}</div>`;
+        html+=`<div style="display:flex;align-items:center;gap:5px;overflow:hidden">${tl(t,18)}<span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t}</span></div>`;
+        html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${r.w}</div><div style="font-size:12px;color:#94a3b8;text-align:center">${r.l}</div><div style="font-size:12px;color:#94a3b8;text-align:center">${r.t}</div>`;
+        html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${pct}</div>`;
+        html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${gbStr(t)}</div>`;
+        html+=`<div style="font-size:12px;text-align:center;color:${sfg}">${sc}</div>`;
+        html+=`<div style="font-size:12px;color:#94a3b8;text-align:center">${dRec}</div>`;
+        html+=`<div style="font-size:12px;color:${accentColor};text-align:right;font-weight:600">${r.pf>0?r.pf.toFixed(1):'—'}</div>`;
+        html+=`<div style="font-size:12px;color:#94a3b8;text-align:right">${backStr(t)}</div>`;
+        html+=`<div style="font-size:12px;color:#94a3b8;text-align:right">${r.pa>0?r.pa.toFixed(1):'—'}</div>`;
+        html+=`<div style="display:flex;gap:3px;align-items:center;padding-left:4px">${mkBadges(t,isDivLdr)}</div>`;
+        html+=`</div>`;
+      });
+      html+=`</div></div></div>`;
     }
   }
 
