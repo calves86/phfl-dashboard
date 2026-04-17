@@ -1,4 +1,4 @@
-/* ===== leftnav.js — Shared vertical navigation for SBT Dashboard ===== */
+/* ===== leftnav.js — Shared vertical navigation for PHFL Dashboard ===== */
 
 /**
  * initLeftNav(activePage, opts)
@@ -54,7 +54,7 @@ function initLeftNav(activePage, opts) {
 }
 
 function _buildNavHTML(activePage, opts) {
-  const logo     = opts.logo       || 'sbt-logo.png';
+  const logo     = opts.logo       || 'team-logo/playahatas-logo.jpg';
   const lName    = opts.leagueName || 'SBT Fantasy';
   const lSub     = opts.leagueSub  || 'Sigma Beta Tau';
   const footer   = opts.footerText || 'SBT &middot; 2025';
