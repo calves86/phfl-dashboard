@@ -1,5 +1,5 @@
 /* ===== PHFL Fantasy Football — Service Worker ===== */
-const CACHE = 'phfl-v46';
+const CACHE = 'phfl-v47';
 
 const STATIC_ASSETS = [
   './leftnav.js',
